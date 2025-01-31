@@ -1,0 +1,4 @@
+<resources>
+    <color name="scrollbar_thumb">#03b5f0</color> <!-- Thumb color -->
+    <color name="scrollbar_track">#545459</color> <!-- Track color -->
+</resources>
