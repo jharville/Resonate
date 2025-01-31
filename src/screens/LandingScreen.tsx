@@ -1,5 +1,5 @@
 import React, {useCallback, useState} from 'react';
-import {StyleSheet, View, Text, Keyboard, Pressable} from 'react-native';
+import {StyleSheet, View, Text, Keyboard, Pressable, ScrollView} from 'react-native';
 import Video from 'react-native-video';
 import {LandingStackScreenProps} from '../navigation/types/navigation.types';
 import {SearchCity} from '../components/SearchCity';
@@ -29,34 +29,44 @@ export const LandingScreen = ({navigation}: LandingStackScreenProps<'LandingScre
   );
 
   return (
-    <Pressable onPress={Keyboard.dismiss} style={styles.wholeScreen}>
-      <Video
+    <View style={styles.wholePage}>
+      {/* <Video
         source={require('../assets/Weather_App_Background_Video_Compressed.mp4')}
         style={styles.videoLanding}
         resizeMode="cover"
         repeat
         muted
         playInBackground={false}
-      />
+        /> */}
 
-      <View style={styles.appTitleAndSearch}>
-        <View>
-          <Text style={styles.appTitle}>Weather</Text>
-          <Text style={styles.appTitle}>App</Text>
+      <ScrollView showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
+        <View style={styles.appTitleAndSearch}>
+          {/* <SearchCity
+              handleSearch={handleSearch}
+              handleSuggestionClick={handleSuggestionClick}
+              userTextInput={userTextInput}
+              setUserTextInput={setUserTextInput}
+            /> */}
+          <Text style={{fontSize: 54, color: 'white', paddingVertical: 25}}>Balls</Text>
+          <Text style={{fontSize: 54, color: 'white', paddingVertical: 25}}>Balls</Text>{' '}
+          <Text style={{fontSize: 54, color: 'white', paddingVertical: 25}}>Balls</Text>{' '}
+          <Text style={{fontSize: 54, color: 'white', paddingVertical: 25}}>Balls</Text>{' '}
+          <Text style={{fontSize: 54, color: 'white', paddingVertical: 25}}>Balls</Text>{' '}
+          <Text style={{fontSize: 54, color: 'white', paddingVertical: 25}}>Balls</Text>{' '}
+          <Text style={{fontSize: 54, color: 'white', paddingVertical: 25}}>Balls</Text>
+          <Text style={{fontSize: 54, color: 'white', paddingVertical: 25}}>Balls</Text>
+          <Text style={{fontSize: 54, color: 'white', paddingVertical: 25}}>Balls</Text>
         </View>
-
-        <SearchCity
-          handleSearch={handleSearch}
-          handleSuggestionClick={handleSuggestionClick}
-          userTextInput={userTextInput}
-          setUserTextInput={setUserTextInput}
-        />
-      </View>
-    </Pressable>
+      </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  wholePage: {
+    flex: 1,
+    backgroundColor: '#151314',
+  },
   wholeScreen: {
     flex: 1,
     paddingTop: 50,

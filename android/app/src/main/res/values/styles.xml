@@ -8,6 +8,8 @@
         <item name="android:editTextBackground">@drawable/rn_edit_text_material</item>
         <item name="android:scrollbarThumbVertical">@color/scrollbar_thumb</item>
         <item name="android:scrollbarTrackVertical">@color/scrollbar_track</item>
+            <item name="android:windowBackground">#000000</item>
+                <item name="android:windowBackground">@color/bootsplash_background</item>
     </style>
 
 </resources>
