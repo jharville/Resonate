@@ -1,12 +1,9 @@
 
-# Weather App (Mobile)
-A simple Mobile app that displays local weather variables based on search.
+# Resonate
+A music player and file host.
 THIS IS A WIP. 
 
-![Screen Shot 2025-01-28 at 7 43 06 PM](https://github.com/user-attachments/assets/8cbca8fb-b337-45ff-8bb1-a1dade26643f)
-![Screen Shot 2025-01-28 at 7 43 28 PM](https://github.com/user-attachments/assets/01c060d3-21b8-4782-953c-e6579d0fb360)
-![Screen Shot 2025-01-28 at 7 43 50 PM](https://github.com/user-attachments/assets/0ec93631-9100-40b6-8744-8174528387b0)
-![Screen Shot 2025-01-28 at 7 44 01 PM](https://github.com/user-attachments/assets/89b8fd59-bf75-46c6-9a54-3428687d5745)
+
 
 
 
