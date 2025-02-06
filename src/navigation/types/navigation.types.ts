@@ -1,34 +1,25 @@
-import {
-  CompositeScreenProps,
-  NavigatorScreenParams,
-} from '@react-navigation/native';
+import {CompositeScreenProps, NavigatorScreenParams} from '@react-navigation/native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 
 export type RootNavigatorParamList = {
-  LandingStack: NavigatorScreenParams<LandingStackParamList>;
-  MainStack: NavigatorScreenParams<MainStackParamList>;
-  // ResultStack: NavigatorScreenParams<ResultStackParamList>;
+  AuthStack: NavigatorScreenParams<AuthStackParamList>;
+  CollectionStack: NavigatorScreenParams<CollectionStackParamList>;
 };
 
-export type LandingStackParamList = {
-  LandingScreen: undefined;
+export type AuthStackParamList = {
+  AuthScreen: undefined;
 };
 
-export type MainStackParamList = {
-  ResultScreen: {searchTerm: string};
+export type CollectionStackParamList = {
+  CollectionScreen: undefined;
+  PlayerScreen: undefined;
 };
 
 export type RootNavigatorScreenProps<T extends keyof RootNavigatorParamList> =
   NativeStackScreenProps<RootNavigatorParamList, T>;
 
-export type LandingStackScreenProps<T extends keyof LandingStackParamList> =
+export type CollectionStackScreenProps<T extends keyof CollectionStackParamList> =
   CompositeScreenProps<
-    NativeStackScreenProps<LandingStackParamList, T>,
-    RootNavigatorScreenProps<keyof RootNavigatorParamList>
-  >;
-
-export type MainStackScreenProps<T extends keyof MainStackParamList> =
-  CompositeScreenProps<
-    NativeStackScreenProps<MainStackParamList, T>,
+    NativeStackScreenProps<CollectionStackParamList, T>,
     RootNavigatorScreenProps<keyof RootNavigatorParamList>
   >;

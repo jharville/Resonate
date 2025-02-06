@@ -11,7 +11,9 @@ export const HeaderBarsButton = (props: HeaderBackButtonProps) => {
     //  For some reason, on physical devices, onPress does not work for the navigation in this case.
     //  I'm using onPressIn for now until we figure out why it doesn't work.
 
-    <TouchableOpacity onPressIn={() => (props.canGoBack ? navigation.goBack() : null)}>
+    <TouchableOpacity
+      onPressIn={() => (props.canGoBack ? navigation.goBack() : null)}
+      hitSlop={{top: 8, bottom: 8, left: 8, right: 15}}>
       <FontAwesome5 name="bars" style={styles.backButton} size={38} />
     </TouchableOpacity>
   );

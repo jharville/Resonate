@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "WeatherApp_Mobile.app"
-               BlueprintName = "WeatherApp_Mobile"
-               ReferencedContainer = "container:WeatherApp_Mobile.xcodeproj">
+               BuildableName = "Resonate.app"
+               BlueprintName = "Resonate"
+               ReferencedContainer = "container:Resonate.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "WeatherApp_MobileTests.xctest"
-               BlueprintName = "WeatherApp_MobileTests"
-               ReferencedContainer = "container:WeatherApp_Mobile.xcodeproj">
+               BuildableName = "ResonateTests.xctest"
+               BlueprintName = "ResonateTests"
+               ReferencedContainer = "container:Resonate.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "WeatherApp_Mobile.app"
-            BlueprintName = "WeatherApp_Mobile"
-            ReferencedContainer = "container:WeatherApp_Mobile.xcodeproj">
+            BuildableName = "Resonate.app"
+            BlueprintName = "Resonate"
+            ReferencedContainer = "container:Resonate.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "WeatherApp_Mobile.app"
-            BlueprintName = "WeatherApp_Mobile"
-            ReferencedContainer = "container:WeatherApp_Mobile.xcodeproj">
+            BuildableName = "Resonate.app"
+            BlueprintName = "Resonate"
+            ReferencedContainer = "container:Resonate.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
