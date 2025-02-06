@@ -1,15 +1,19 @@
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {LandingStack} from './LandingStack';
-import {MainStack} from './MainStack';
+import {AuthStack} from './AuthStack';
+import {CollectionStack} from './CollectionStack';
 import {RootNavigatorParamList} from './types/navigation.types';
+import React from 'react';
+
+// RootNavigator contains all of your stacks going forward. This allows you to apply
+// options over all of the stacks so you don't have to do it individually.
 
 const Stack = createNativeStackNavigator<RootNavigatorParamList>();
 
 const RootNavigator = () => {
   return (
-    <Stack.Navigator initialRouteName="LandingStack" screenOptions={{headerShown: false}}>
-      <Stack.Screen name="LandingStack" component={LandingStack} />
-      <Stack.Screen name="MainStack" component={MainStack} />
+    <Stack.Navigator initialRouteName="CollectionStack" screenOptions={{headerShown: false}}>
+      <Stack.Screen name="AuthStack" component={AuthStack} />
+      <Stack.Screen name="CollectionStack" component={CollectionStack} />
     </Stack.Navigator>
   );
 };

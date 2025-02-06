@@ -1,4 +1,4 @@
-package com.weatherapp_mobile
+package com.Resonate
 
 import android.app.Application
 import com.facebook.react.PackageList

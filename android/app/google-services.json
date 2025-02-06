@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "674318448062",
+    "project_id": "resonate-36c63",
+    "storage_bucket": "resonate-36c63.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:674318448062:android:9948f2433c383ebf8a35ef",
+        "android_client_info": {
+          "package_name": "com.Resonate"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCGs58mMfrod4S0orRNMP0azBaayc8tvN4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
