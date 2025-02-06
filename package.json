@@ -18,17 +18,14 @@
     "@react-navigation/native": "^6.1.18",
     "@react-navigation/native-stack": "^6.11.0",
     "@react-navigation/stack": "^6.4.1",
-    "@rnmapbox/maps": "^10.1.33",
     "@shopify/flash-list": "^1.7.2",
     "@shopify/react-native-skia": "^1.8.0",
     "d3": "^7.9.0",
     "date-fns": "^4.1.0",
     "expo-linear-gradient": "^14.0.1",
     "expo-modules-core": "^2.1.1",
-    "openmeteo": "^1.1.4",
     "react": "18.3.1",
     "react-native": "0.76.3",
-    "react-native-chart-kit": "^6.12.0",
     "react-native-document-picker": "^9.3.1",
     "react-native-gesture-handler": "^2.21.2",
     "react-native-gradients": "^2.1.1",
@@ -39,8 +36,7 @@
     "react-native-svg": "^15.10.1",
     "react-native-track-player": "^4.1.1",
     "react-native-vector-icons": "^10.2.0",
-    "react-native-video": "^6.8.2",
-    "victory-native": "^41.14.0"
+    "react-native-video": "^6.8.2"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
