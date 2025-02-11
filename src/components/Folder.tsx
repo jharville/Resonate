@@ -30,7 +30,6 @@ export const Folder = ({onPress}: FolderProps) => {
 const styles = StyleSheet.create({
   wholeBox: {
     paddingHorizontal: 20,
-    // paddingVertical: 15,
   },
 
   folderTopBox: {

@@ -1,4 +1,4 @@
-import React, {useCallback} from 'react';
+import React from 'react';
 import {StyleSheet, View, ScrollView} from 'react-native';
 import {CollectionStackScreenProps} from '../navigation/types/navigation.types';
 import {Folder} from '../components/Folder';
@@ -20,6 +20,7 @@ export const CollectionScreen = ({navigation}: CollectionStackScreenProps<'Colle
         <View style={styles.folderContainer}>
           <Folder onPress={() => handleFolderClick('Folder 1')} />
         </View>
+        {/*  */}
       </ScrollView>
     </View>
   );
