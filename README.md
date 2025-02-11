@@ -1,6 +1,6 @@
 
 # Resonate
-A music player/file host with Redux and Backened (Firebase).
+A music player/file host with Redux and Backend (Firebase).
 THIS IS A WIP.
 
 
