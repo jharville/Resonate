@@ -1,32 +1,34 @@
-import React, {useCallback, useState} from 'react';
+import React from 'react';
 import {StyleSheet, View, ScrollView, Text} from 'react-native';
-import {CollectionStackScreenProps} from '../navigation/types/navigation.types';
-import {Folder} from '../components/Folder';
-import {FooterSearchIcon} from '../navigation/FooterComponents/FooterSearchIcon';
-import {HeaderBackButton} from '../navigation/HeaderComponents/HeaderBackButton';
 import Entypo from 'react-native-vector-icons/Entypo';
-import TrackPlayer from 'react-native-track-player';
-import {AudioPlayer} from '../components/AudioPlayer.tsx';
+import {useFetchSongs} from '../useFetchSongs.tsx';
+import {SongList} from '../components/SongList.tsx';
+import {useDispatch} from 'react-redux';
+import {setActiveTrack} from '../features/playerSlice.tsx';
 
 // This is the "Player Screen" this will only render players.
 // Players should only have song list functionality and options.
 // No folder funcitonality
 
 export const PlayerScreen = () => {
-  //
+  const dispatch = useDispatch();
+  const songs = useFetchSongs();
+
+  const handleSelectSong = (song: any) => {
+    dispatch(setActiveTrack(song)); // Sets selected track in Redux
+  };
 
   return (
     <View style={styles.wholePage}>
-      <Text style={styles.playerScreenText}>PlayerScreen</Text>
       <ScrollView
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}>
         <View style={styles.folderContainer}>
-          <AudioPlayer />
+          <SongList songs={songs} onSelectSong={handleSelectSong} />
         </View>
       </ScrollView>
-      {/* Footer */}
+
       <View style={styles.footer}>
         <View style={styles.iconContainer}>
           <Entypo name="plus" size={40} color="white" />
@@ -76,8 +78,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-});
 
-type FooterSearchIconProps = {
-  onPressIcon: () => void;
-};
+  songContainer: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: 'gray',
+  },
+  songText: {
+    color: 'white',
+    fontSize: 16,
+  },
+});

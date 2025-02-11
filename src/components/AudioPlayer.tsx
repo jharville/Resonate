@@ -1,33 +1,143 @@
 import React, {useCallback} from 'react';
-import {View, Button} from 'react-native';
-import TrackPlayer from 'react-native-track-player';
+import {View, StyleSheet, Text} from 'react-native';
+import TrackPlayer, {State, usePlaybackState} from 'react-native-track-player';
+import {useDispatch} from 'react-redux';
+import {setActiveTrack} from '../features/playerSlice';
+import {PressableScaleButton} from './PressableScaleButton';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import FontAwesome from 'react-native-vector-icons/FontAwesome6';
 
-export const AudioPlayer = () => {
-  // Define the playSong function using useCallback to ensure it does not re-create on every render
+//TrackPlayer States
+/*
+None: "none",
+Ready: "ready",
+Playing: "playing",
+Paused: "paused",
+Stopped: "stopped", a.k.a Reset
+Buffering: "buffering",
+Connecting: "connecting"
+*/
+
+export const AudioPlayer = ({activeTrack}: AudioPlayerProps) => {
+  const dispatch = useDispatch(); // Redux dispatch function
+  const playbackState = usePlaybackState(); // Automatically tracks playback state
+
+  const trackToAdd = {
+    id: activeTrack?.id,
+    url: activeTrack?.url,
+    name: activeTrack?.name,
+  };
+
   const playSong = useCallback(async () => {
-    console.log('adding song');
+    try {
+      await TrackPlayer.reset(); // Clears queue to avoid conflicts
+      await TrackPlayer.add([trackToAdd]); // Adds the track
+      dispatch(setActiveTrack(trackToAdd));
+      await TrackPlayer.play();
+    } catch (error) {
+      console.error('🚨 Error in playSong:', error);
+    }
+  }, [dispatch, activeTrack]);
 
-    // Add a song to TrackPlayer's queue
-    await TrackPlayer.add([
-      {
-        id: 'trackId', // Unique identifier for the track
-        url: 'https://firebasestorage.googleapis.com/v0/b/resonate-36c63.firebasestorage.app/o/Gasoline.mp3?alt=media&token=a95b61e7-6ba0-48b6-9ab5-2904816ffc12', // URL of the audio file
-        title: 'Track Title', // Title of the track
-        artist: 'Track Artist', // Artist of the track
-        // artwork: require('track.png'), // Uncomment and provide a valid image if artwork is needed
-      },
-    ]);
-    console.log('added song');
+  const pauseSong = useCallback(async () => {
+    await TrackPlayer.pause();
+  }, [dispatch]);
 
-    // Start playing the track
-    await TrackPlayer.play();
-  }, []); // Empty dependency array ensures this function is memoized and does not recreate on re-renders
+  const handleSongAction = useCallback(async () => {
+    if (playbackState.state === State.Playing) {
+      await pauseSong();
+    } else {
+      await playSong();
+    }
+  }, [playbackState, playSong, pauseSong]);
+
+  //For gettting the appropriate icon based on TrackPlayer state
+  const getActionButton = () => {
+    if (playbackState.state === State.Playing) {
+      return <MaterialIcons name="pause-circle-outline" size={50} color="#fff" />;
+    } else playbackState.state === State.Paused;
+    return <MaterialIcons name="play-circle-outline" size={50} color="#fff" />;
+  };
+
+  // console.log('Track is:', playbackState);
 
   return (
-    <View style={{padding: 20}}>
-      <Button title="Play" onPress={playSong} />
-      <Button title="Pause" onPress={() => TrackPlayer.pause()} />
-      <Button title="Stop" onPress={() => TrackPlayer.stop()} />
+    <View style={styles.audioPlayer}>
+      <View style={styles.vinylAndInfoContainer}>
+        <View style={styles.recordContainer}>
+          <FontAwesome name="record-vinyl" size={40} color="#0078D7" />
+        </View>
+        <View style={styles.infoContainer}>
+          <Text style={styles.trackTitle} numberOfLines={1} ellipsizeMode="tail">
+            {trackToAdd.name}
+          </Text>
+          <Text style={styles.trackFolderName}>Demo Stuff</Text>
+        </View>
+      </View>
+
+      <View style={styles.rightSideButtons}>
+        <PressableScaleButton scale={0.9} onPress={handleSongAction}>
+          {getActionButton()}
+        </PressableScaleButton>
+      </View>
     </View>
   );
+};
+
+const styles = StyleSheet.create({
+  audioPlayer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 15,
+    paddingTop: 10,
+    backgroundColor: '#151314',
+    borderTopWidth: 2,
+    borderColor: '#26272b',
+  },
+  vinylAndInfoContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  infoContainer: {
+    flex: 1,
+    paddingLeft: 10,
+  },
+  rightSideButtons: {
+    paddingLeft: 10,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+  },
+  trackFolderName: {
+    color: 'white',
+    fontSize: 13,
+  },
+  trackTitle: {
+    color: 'white',
+    fontSize: 15,
+    fontWeight: 700,
+  },
+  recordContainer: {
+    backgroundColor: '#26272b',
+    paddingVertical: 7,
+
+    paddingHorizontal: 10,
+    borderRadius: 4,
+  },
+});
+
+// const restartSong = useCallback(async () => {
+//   await TrackPlayer.seekTo(0); // Moves playback to the start of the track
+//   await TrackPlayer.play();
+// }, []);
+
+type activeTrack = {
+  id: string;
+  url: string;
+  name: string;
+};
+
+type AudioPlayerProps = {
+  activeTrack: activeTrack;
 };

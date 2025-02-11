@@ -1,23 +1,26 @@
 import React, {useEffect} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import RootNavigator from './src/navigation/RootNavigator';
-import {useSetupTrackPlayer} from './src/useSetupTrackPlayer';
+import {useSetupTrackPlayer} from './src/useSetupTrackPlayer'; //  A custom hook for setting up TrackPlayer
+import {Provider} from 'react-redux';
+import {store} from './store';
 
-const App: React.FC = () => {
+const App = () => {
   const [isSetup, setupPlayer] = useSetupTrackPlayer();
 
+  // useEffect runs when the component mounts and whenever `isSetup` or `setupPlayer` changes
   useEffect(() => {
     if (!isSetup) {
-      console.log('Track Player Not Setup');
       setupPlayer();
     } else {
-      console.log('Track Player Setup');
     }
-  }, [isSetup, setupPlayer]);
+  }, [isSetup, setupPlayer]); // Dependencies: Runs the effect when these values change
 
   return (
     <NavigationContainer>
-      <RootNavigator />
+      <Provider store={store}>
+        <RootNavigator />
+      </Provider>
     </NavigationContainer>
   );
 };

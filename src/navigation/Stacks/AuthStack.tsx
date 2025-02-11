@@ -3,8 +3,8 @@ import {
   createNativeStackNavigator,
   NativeStackNavigationOptions,
 } from '@react-navigation/native-stack';
-import {AuthScreen} from '../screens/AuthScreen';
-import {AuthStackParamList} from './types/navigation.types';
+import {AuthScreen} from '../../screens/AuthScreen';
+import {AuthStackParamList} from '../types/navigation.types';
 
 const Stack = createNativeStackNavigator<AuthStackParamList>();
 
