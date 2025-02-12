@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Text, TextInput, Button, StyleSheet, TouchableOpacity} from 'react-native';
+import {View, Text, TextInput, StyleSheet, TouchableOpacity} from 'react-native';
 import auth from '@react-native-firebase/auth';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -56,6 +56,10 @@ export const AuthScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
+      <View style={styles.resonateContainer}>
+        <Text style={styles.resonateText}>Resonate</Text>
+      </View>
+
       <Text style={styles.title}>Login</Text>
       {error && <Text style={styles.error}>{error}</Text>}
 
@@ -101,6 +105,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 20,
     backgroundColor: '#121329',
+  },
+
+  resonateContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  resonateText: {
+    fontSize: 40,
+    color: 'white',
+    fontFamily: 'Orbitron',
   },
 
   title: {
