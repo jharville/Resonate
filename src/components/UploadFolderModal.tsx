@@ -28,6 +28,7 @@ export const UploadFolderModal = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [folderName, setFolderName] = useState('');
   const [artistName, setArtistName] = useState('');
+  // changes i meant to make on branch 1
 
   // Animation setup
   const screenWidth = Dimensions.get('window').width;
