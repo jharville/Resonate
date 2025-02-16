@@ -2,7 +2,7 @@ import React, {useCallback} from 'react';
 import {View, StyleSheet, Text} from 'react-native';
 import TrackPlayer, {State, usePlaybackState} from 'react-native-track-player';
 import {useDispatch} from 'react-redux';
-import {setActiveTrack} from '../features/playerSlice';
+import {setActiveTrack} from '../redux/playerSlice';
 import {PressableScaleButton} from './PressableScaleButton';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome6';

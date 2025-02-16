@@ -11,7 +11,9 @@ import {PlayerScreen} from '../../screens/PlayerScreen';
 import {StyleSheet, View} from 'react-native';
 import {useSelector} from 'react-redux';
 import {AudioPlayer} from '../../components/AudioPlayer';
-import {PlayerState} from '../../features/playerSlice';
+import {PlayerState} from '../../redux/playerSlice';
+import {RootState} from '../../../store';
+import {ProfileModal} from '../../components/modals/ProfileModal';
 
 const Stack = createNativeStackNavigator<CollectionStackParamList>();
 
@@ -59,6 +61,9 @@ export const CollectionStack = () => {
   const activeTrack = useSelector(
     (state: {player: PlayerState}) => state.player.activeTrack || null,
   );
+  const isModalVisible = useSelector(
+    (state: RootState) => state.profileModal.isProfileModalVisible,
+  );
 
   return (
     <View style={styles.container}>
@@ -70,6 +75,8 @@ export const CollectionStack = () => {
         />
         <Stack.Screen name="PlayerScreen" component={PlayerScreen} options={PlayerScreenOptions} />
       </Stack.Navigator>
+
+      <ProfileModal />
 
       {/* For Conditionally rendering the music player at the bottom of the screen */}
       {activeTrack && (
