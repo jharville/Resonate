@@ -3,27 +3,25 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome6';
 
-export const Folder = ({onPress}: FolderProps) => {
+export const Folder = ({folderName, artistName, onPress}: FolderProps) => {
   return (
-    <>
-      <View style={styles.wholeBox}>
-        <TouchableOpacity onPress={onPress}>
-          <View style={styles.folderTopBox}>
-            <FontAwesome name="record-vinyl" size={80} color="#0078D7" />
-          </View>
-        </TouchableOpacity>
-
-        <View style={styles.folderBottomBox}>
-          <View style={styles.textBottomBox}>
-            <Text style={styles.folderTitle}>Demo Stuff</Text>
-            <Text style={styles.folderArtistName}>Joey</Text>
-          </View>
-          <TouchableOpacity hitSlop={10}>
-            <Entypo name="dots-three-vertical" style={styles.settingsButtonStyle} />
-          </TouchableOpacity>
+    <View style={styles.wholeBox}>
+      <TouchableOpacity onPress={onPress}>
+        <View style={styles.folderTopBox}>
+          <FontAwesome name="record-vinyl" size={80} color="#0078D7" />
         </View>
+      </TouchableOpacity>
+
+      <View style={styles.folderBottomBox}>
+        <View style={styles.textBottomBox}>
+          <Text style={styles.folderTitle}>{folderName}</Text>
+          <Text style={styles.folderArtistName}>{artistName}</Text>
+        </View>
+        <TouchableOpacity hitSlop={10}>
+          <Entypo name="dots-three-vertical" style={styles.settingsButtonStyle} />
+        </TouchableOpacity>
       </View>
-    </>
+    </View>
   );
 };
 
@@ -76,5 +74,7 @@ const styles = StyleSheet.create({
 });
 
 export type FolderProps = {
+  folderName: string;
+  artistName: string;
   onPress?: () => void;
 };

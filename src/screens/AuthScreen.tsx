@@ -1,110 +1,237 @@
 import React, {useState} from 'react';
 import {View, Text, TextInput, StyleSheet, TouchableOpacity} from 'react-native';
-import auth from '@react-native-firebase/auth';
+import {doc, setDoc, serverTimestamp, query, collection, where, getDocs} from 'firebase/firestore';
+import {createUserWithEmailAndPassword, signInWithEmailAndPassword, User} from 'firebase/auth';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootNavigatorParamList} from '../navigation/types/navigation.types';
+import {auth, db} from '../../firebaseConfig';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
-export const AuthScreen: React.FC = () => {
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
+export const AuthScreen = () => {
   const [error, setError] = useState<string | null>(null);
+  const [isSigningUp, setIsSigningUp] = useState<boolean>(false);
+  const [form, setForm] = useState({
+    displayName: '',
+    email: '',
+    confirmEmail: '',
+    password: '',
+    confirmPassword: '',
+  });
 
   const navigation = useNavigation<NativeStackNavigationProp<RootNavigatorParamList>>();
 
-  const [isSignUp, setIsSignUp] = useState<boolean>(false);
-
-  // Function to handle navigating to LandingStack
-  const navigateToLandingStack = (): void => {
+  const navigateToCollectionStack = (user: User, folders: any[]): void => {
+    const userData = {
+      uid: user.uid,
+      email: user.email,
+      displayName: user.displayName || '',
+    };
     navigation.reset({
       index: 0,
-      routes: [{name: 'CollectionStack'}],
+      routes: [{name: 'CollectionStack', params: {userData, folders}}],
     });
   };
 
-  //Firebase Sign in Function
+  const handleInputFieldChange = (field: string, value: string) => {
+    setForm(prev => ({...prev, [field]: value}));
+  };
+
   const handleSignIn = async (): Promise<void> => {
     try {
-      const userCredential = await auth().signInWithEmailAndPassword(email, password);
-      console.log('User signed in!', userCredential.user);
-      setError(null);
-      navigateToLandingStack();
-    } catch (err: any) {
-      console.error('Sign in error:', err);
-      setError(err.message);
+      const userCredential = await signInWithEmailAndPassword(auth, form.email, form.password);
+      const user = userCredential.user;
+
+      if (!user) return;
+
+      // Fetch user's music folders from Firestore
+      const q = query(collection(db, 'folders'), where('userId', '==', user.uid));
+      const querySnapshot = await getDocs(q);
+
+      // Converts retrieved Firestore data to an array
+      const folders = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      navigateToCollectionStack(user, folders);
+    } catch (error: any) {
+      setError(error.message);
     }
   };
-
-  // Function to handle signing up a new user
   const handleSignUp = async (): Promise<void> => {
     try {
-      const userCredential = await auth().createUserWithEmailAndPassword(email, password);
-      console.log('User signed up!', userCredential.user);
-      setError(null);
-      navigateToLandingStack();
-    } catch (err: any) {
-      console.error('Sign up error:', err);
-      setError(err.message);
-    }
-  };
+      const userCredential = await createUserWithEmailAndPassword(auth, form.email, form.password);
+      const user = userCredential.user;
 
-  // Toggle between Sign In and Sign Up modes and clear any errors
-  const toggleAuthMode = (): void => {
-    setError(null);
-    setIsSignUp(prevMode => !prevMode);
+      if (user) {
+        await setDoc(doc(db, 'users', user.uid), {
+          displayName: form.displayName,
+          email: user.email,
+          createdAt: serverTimestamp(),
+        });
+      }
+
+      navigateToCollectionStack(user, []);
+    } catch (error: any) {
+      setError(error.message);
+    }
   };
 
   return (
-    <View style={styles.container}>
+    <View style={styles.wholeContainer}>
       <View style={styles.resonateContainer}>
         <Text style={styles.resonateText}>Resonate</Text>
       </View>
 
-      <Text style={styles.title}>Login</Text>
+      <Text style={styles.title}>{isSigningUp ? 'Sign Up!' : 'Login'}</Text>
       {error && <Text style={styles.error}>{error}</Text>}
 
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        value={email}
-        autoCapitalize="none"
-        keyboardType="email-address"
-        onChangeText={setEmail}
-      />
+      {!isSigningUp ? (
+        <>
+          <View style={styles.inputAndIconRow}>
+            <MaterialIcons name="email" style={{paddingHorizontal: 5}} size={30} color="#121329" />
+            <TextInput
+              style={styles.input}
+              placeholder="Email"
+              value={form.email}
+              autoCapitalize="none"
+              keyboardType="email-address"
+              onChangeText={text => handleInputFieldChange('email', text)}
+            />
+          </View>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        value={password}
-        secureTextEntry={false}
-        onChangeText={setPassword}
-      />
-      {isSignUp ? (
-        <TouchableOpacity onPress={handleSignUp}>
-          <Text style={styles.signUpStyle}>Sign Up</Text>
-        </TouchableOpacity>
+          <View style={styles.inputAndIconRow}>
+            <Ionicons style={{paddingHorizontal: 5}} name="lock-closed" size={30} color="#121329" />
+            <TextInput
+              style={styles.input}
+              placeholder="Password"
+              value={form.password}
+              secureTextEntry
+              autoCapitalize="none"
+              onChangeText={text => handleInputFieldChange('password', text)}
+            />
+          </View>
+        </>
       ) : (
-        <TouchableOpacity onPress={handleSignIn}>
-          <Text style={styles.signUpStyle}>Sign In</Text>
-        </TouchableOpacity>
-      )}
+        <>
+          <View style={styles.signUpContainer}>
+            <View style={styles.inputAndIconRow}>
+              <Ionicons style={{paddingHorizontal: 5}} name="person" size={30} color="#121329" />
+              <TextInput
+                style={styles.input}
+                placeholder="Display Name"
+                value={form.displayName}
+                autoCapitalize="none"
+                onChangeText={text => handleInputFieldChange('displayName', text)}
+              />
+            </View>
 
-      <TouchableOpacity onPress={toggleAuthMode}>
-        <Text style={styles.toggle}>
-          {isSignUp ? 'Already have an account? Sign In' : 'New user? Sign Up'}
-        </Text>
-      </TouchableOpacity>
+            <View style={styles.inputAndIconRow}>
+              <MaterialIcons
+                name="email"
+                style={{paddingHorizontal: 5}}
+                size={30}
+                color="#121329"
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Email"
+                value={form.email}
+                autoCapitalize="none"
+                keyboardType="email-address"
+                onChangeText={text => handleInputFieldChange('email', text)}
+              />
+            </View>
+
+            <View style={styles.inputAndIconRow}>
+              <MaterialIcons
+                name="email"
+                style={{paddingHorizontal: 5}}
+                size={30}
+                color="#121329"
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Confirm Email"
+                value={form.confirmEmail}
+                autoCapitalize="none"
+                keyboardType="email-address"
+                onChangeText={text => handleInputFieldChange('confirmEmail', text)}
+              />
+            </View>
+
+            <View style={styles.inputAndIconRow}>
+              <Ionicons
+                style={{paddingHorizontal: 5}}
+                name="lock-closed"
+                size={30}
+                color="#121329"
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Password"
+                value={form.password}
+                secureTextEntry
+                autoCapitalize="none"
+                onChangeText={text => handleInputFieldChange('password', text)}
+              />
+            </View>
+
+            <View style={styles.inputAndIconRow}>
+              <Ionicons
+                style={{paddingHorizontal: 5}}
+                name="lock-closed"
+                size={30}
+                color="#121329"
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Confirm Password"
+                value={form.confirmPassword}
+                secureTextEntry
+                autoCapitalize="none"
+                onChangeText={text => handleInputFieldChange('confirmPassword', text)}
+              />
+            </View>
+          </View>
+        </>
+      )}
+      <View>
+        {isSigningUp ? (
+          <TouchableOpacity onPress={handleSignUp}>
+            <Text style={styles.signUpStyle}>Sign Up</Text>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity onPress={handleSignIn}>
+            <Text style={styles.signUpStyle}>Sign In</Text>
+          </TouchableOpacity>
+        )}
+        <View style={styles.bottomTextStyle}>
+          <Text style={styles.acountText}>
+            {isSigningUp ? 'Existing User? ' : 'Need an Account? '}
+          </Text>
+          <TouchableOpacity onPress={() => setIsSigningUp(!isSigningUp)}>
+            <Text style={styles.underlineText}>{isSigningUp ? 'Sign In' : 'Sign Up'}</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  wholeContainer: {
     gap: 10,
     flex: 1,
     justifyContent: 'center',
     paddingHorizontal: 20,
     backgroundColor: '#121329',
+  },
+
+  signUpContainer: {
+    gap: 10,
   },
 
   resonateContainer: {
@@ -125,27 +252,50 @@ const styles = StyleSheet.create({
   },
 
   input: {
+    flex: 1,
     borderWidth: 1,
     borderColor: '#ccc',
-    borderRadius: 5,
     paddingHorizontal: 10,
-    paddingVertical: 8,
     backgroundColor: '#f4f4f4',
+    color: 'black',
+    borderTopRightRadius: 5,
+    borderBottomRightRadius: 5,
+  },
+
+  inputAndIconRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderColor: '#ccc',
+    borderRadius: 5,
+    backgroundColor: '#f4f4f4',
+    color: 'black',
   },
 
   signUpStyle: {
-    paddingHorizontal: 10,
     paddingVertical: 8,
     backgroundColor: '#007BFF',
     textAlign: 'center',
     borderColor: '#ccc',
     borderRadius: 5,
     color: 'white',
+    fontSize: 20,
+  },
+
+  bottomTextStyle: {
+    paddingTop: 10,
+    alignItems: 'center',
+  },
+
+  acountText: {color: '#f4f4f4', fontSize: 18},
+  underlineText: {
+    color: '#f4f4f4',
+    fontSize: 18,
+    textDecorationLine: 'underline',
   },
 
   toggle: {
-    marginTop: 15,
-    textAlign: 'center',
+    alignItems: 'center',
     color: '#f4f4f4',
   },
 

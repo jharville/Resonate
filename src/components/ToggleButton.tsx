@@ -1,21 +1,40 @@
-import React from 'react';
-import {View, Text, TouchableOpacity, StyleSheet, ViewStyle} from 'react-native';
+import React, {useState} from 'react';
+import {View, Text, TouchableOpacity, StyleSheet, ViewStyle, TextStyle} from 'react-native';
 
 export const ToggleButton = ({
   buttonOptions,
-  selectedOption,
   onSelectOption,
+  buttonStyle,
+  selectedButtonStyle,
+  textStyle,
+  selectedTextStyle,
 }: ToggleButtonProps) => {
+  const [selectedOption, setSelectedOption] = useState<string | null>(null);
+
+  const handleSelect = (option: string) => {
+    setSelectedOption(option);
+    onSelectOption(option);
+  };
+
   return (
     <View style={styles.forecastTextAndButtons}>
-      <View style={styles.daySelectorContainer}>
+      <View style={styles.optionSelectorContainer}>
         {buttonOptions.map((option, index) => (
           <TouchableOpacity
             key={index}
             hitSlop={12}
-            style={selectedOption === option ? styles.selectedButton : styles.button}
-            onPress={() => onSelectOption(option)}>
-            <Text style={styles.paramText}>{option}</Text>
+            style={[
+              selectedOption === option ? styles.selectedButton : styles.button,
+              selectedOption === option ? selectedButtonStyle : buttonStyle,
+            ]}
+            onPress={() => handleSelect(option)}>
+            <Text
+              style={[
+                selectedOption === option ? styles.selectedText : styles.paramText,
+                selectedOption === option ? selectedTextStyle : textStyle,
+              ]}>
+              {option}
+            </Text>
           </TouchableOpacity>
         ))}
       </View>
@@ -46,7 +65,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
 
-  daySelectorContainer: {
+  optionSelectorContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
@@ -64,10 +83,18 @@ const styles = StyleSheet.create({
     color: 'black',
     fontWeight: 'bold',
   },
+
+  selectedText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
 });
 
 type ToggleButtonProps = {
   buttonOptions: string[]; // Array of button options (e.g., ["Summary", "Hourly"])
-  selectedOption: string; // Currently selected option
   onSelectOption: (selectedOption: string) => void; // Callback function when an option is selected
+  buttonStyle?: ViewStyle; // Custom styling for buttons
+  selectedButtonStyle?: ViewStyle; // Custom styling for selected button
+  textStyle?: TextStyle; // Custom styling for text
+  selectedTextStyle?: TextStyle; // Custom styling for selected text
 };

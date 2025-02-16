@@ -4,7 +4,7 @@ import {PressableScaleButton} from './PressableScaleButton';
 import {State, usePlaybackState} from 'react-native-track-player';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {useSelector} from 'react-redux';
-import {PlayerState} from '../features/playerSlice';
+import {PlayerState} from '../redux/playerSlice';
 import Entypo from 'react-native-vector-icons/Entypo';
 
 export const SongList = ({songs, onSelectSong}: SongListProps) => {
@@ -21,24 +21,22 @@ export const SongList = ({songs, onSelectSong}: SongListProps) => {
   return (
     <View>
       {songs.map(song => (
-        <>
-          <View style={styles.wholeContainer}>
-            <View key={song.id} style={styles.iconAndSongContainer}>
-              <View>
-                <PressableScaleButton scale={0.9}>{getActionButton(song)}</PressableScaleButton>
-              </View>
-              <TouchableOpacity
-                style={styles.songContainer}
-                onPress={() => onSelectSong(song)} // Passes selected song to parent
-              >
-                <Text style={styles.songText} numberOfLines={1} ellipsizeMode="tail">
-                  {song.name}
-                </Text>
-              </TouchableOpacity>
+        <View style={styles.wholeContainer} key={song.id}>
+          <View style={styles.iconAndSongContainer}>
+            <View>
+              <PressableScaleButton scale={0.9}>{getActionButton(song)}</PressableScaleButton>
             </View>
-            <Entypo name="dots-three-vertical" style={styles.settingsButtonStyle} />
+            <TouchableOpacity
+              style={styles.songContainer}
+              onPress={() => onSelectSong(song)} // Passes selected song to parent
+            >
+              <Text style={styles.songText} numberOfLines={1} ellipsizeMode="tail">
+                {song.name}
+              </Text>
+            </TouchableOpacity>
           </View>
-        </>
+          <Entypo name="dots-three-vertical" style={styles.settingsButtonStyle} />
+        </View>
       ))}
     </View>
   );

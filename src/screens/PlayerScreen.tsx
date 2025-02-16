@@ -1,13 +1,14 @@
 import React from 'react';
 import {StyleSheet, View, ScrollView, Text} from 'react-native';
-import Entypo from 'react-native-vector-icons/Entypo';
 import {useFetchSongs} from '../useFetchSongs.tsx';
 import {SongList} from '../components/SongList.tsx';
 import {useDispatch} from 'react-redux';
-import {setActiveTrack} from '../features/playerSlice.tsx';
+import {setActiveTrack} from '../redux/playerSlice.tsx';
+import {UploadSong} from '../components/UploadSong.tsx';
+import {SongUploadProgress} from '../components/SongUploadProgress.tsx';
 
-// This is the "Player Screen" this will only render players.
-// Players should only have song list functionality and options.
+// This is the "Player Screen" this will only render the player at the bottom
+// and songs listed from Firebase per User.
 // No folder funcitonality
 
 export const PlayerScreen = () => {
@@ -20,6 +21,7 @@ export const PlayerScreen = () => {
 
   return (
     <View style={styles.wholePage}>
+      <SongUploadProgress />
       <ScrollView
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}
@@ -28,12 +30,7 @@ export const PlayerScreen = () => {
           <SongList songs={songs} onSelectSong={handleSelectSong} />
         </View>
       </ScrollView>
-
-      <View style={styles.footer}>
-        <View style={styles.iconContainer}>
-          <Entypo name="plus" size={40} color="white" />
-        </View>
-      </View>
+      <UploadSong />
     </View>
   );
 };
@@ -58,25 +55,6 @@ const styles = StyleSheet.create({
 
   scrollContent: {
     paddingTop: 20,
-  },
-
-  footer: {
-    position: 'absolute',
-    bottom: 20,
-    right: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 10,
-    backgroundColor: 'transparent',
-  },
-
-  iconContainer: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: '#0078D7',
-    justifyContent: 'center',
-    alignItems: 'center',
   },
 
   songContainer: {

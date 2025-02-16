@@ -12,7 +12,7 @@ export type AuthStackParamList = {
 
 export type CollectionStackParamList = {
   CollectionScreen: undefined;
-  PlayerScreen: undefined;
+  PlayerScreen: {folderId: string};
 };
 
 export type RootNavigatorScreenProps<T extends keyof RootNavigatorParamList> =
