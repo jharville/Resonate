@@ -15,6 +15,7 @@ export const ProfileModal = () => {
   const auth = getAuth();
   const user = auth.currentUser;
   const userName = user?.displayName;
+  // comment added
 
   useEffect(() => {
     if (isVisible) {
