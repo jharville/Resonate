@@ -10,7 +10,6 @@ import {
   Animated,
   Easing,
   Dimensions,
-  Switch,
   ViewStyle,
 } from 'react-native';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -20,7 +19,6 @@ import firestore from '@react-native-firebase/firestore';
 import {ToggleButton} from './ToggleButton';
 
 const buttonStyle: ViewStyle = {
-  // backgroundColor: 'white',
   borderRadius: 10,
 };
 
@@ -29,11 +27,9 @@ export const UploadFolderModal = () => {
   const [folderName, setFolderName] = useState('');
   const [artistName, setArtistName] = useState('');
 
-  // Animation setup
   const screenWidth = Dimensions.get('window').width;
-  const slideAnim = useRef(new Animated.Value(screenWidth)).current; // Start off-screen (right)
+  const slideAnim = useRef(new Animated.Value(screenWidth)).current;
 
-  // Open Modal with Animation (Slide from Right to Left)
   const openModal = () => {
     setModalVisible(true);
     Animated.timing(slideAnim, {
@@ -44,10 +40,9 @@ export const UploadFolderModal = () => {
     }).start();
   };
 
-  // Close Modal with Animation (Slide Back to Right)
   const closeModal = () => {
     Animated.timing(slideAnim, {
-      toValue: screenWidth, // Moves back to right
+      toValue: screenWidth,
       duration: 500,
       easing: Easing.in(Easing.exp),
       useNativeDriver: true,
@@ -72,14 +67,10 @@ export const UploadFolderModal = () => {
         artistName: artistName.trim(),
         createdAt: firestore.FieldValue.serverTimestamp(),
       };
-
       await firestore().collection('users').doc(user.uid).collection('folders').add(newFolder);
-
       setFolderName('');
       setArtistName('');
       closeModal();
-
-      Alert.alert('Success', `Folder "${folderName}" created!`);
     } catch (error) {
       console.error('Error creating folder:', error);
       Alert.alert('Error', 'Failed to create folder.');
@@ -205,7 +196,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     position: 'absolute',
     bottom: 20,
-    right: 20,
+    right: 10,
     zIndex: 10,
   },
 

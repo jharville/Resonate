@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Text, TextInput, StyleSheet, TouchableOpacity} from 'react-native';
+import {View, Text, TextInput, StyleSheet, TouchableOpacity, ActivityIndicator} from 'react-native';
 import {doc, setDoc, serverTimestamp, query, collection, where, getDocs} from 'firebase/firestore';
 import {createUserWithEmailAndPassword, signInWithEmailAndPassword, User} from 'firebase/auth';
 import {useNavigation} from '@react-navigation/native';
@@ -8,8 +8,10 @@ import {RootNavigatorParamList} from '../navigation/types/navigation.types';
 import {auth, db} from '../../firebaseConfig';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {loadingStatuses, useLoadingStatus} from '../useLoadingStatuses';
 
 export const AuthScreen = () => {
+  const {status, startLoading} = useLoadingStatus();
   const [error, setError] = useState<string | null>(null);
   const [isSigningUp, setIsSigningUp] = useState<boolean>(false);
   const [form, setForm] = useState({
@@ -45,7 +47,9 @@ export const AuthScreen = () => {
 
       if (!user) return;
 
-      // Fetch user's music folders from Firestore
+      startLoading();
+
+      // Fetches user's music folders from Firestore
       const q = query(collection(db, 'folders'), where('userId', '==', user.uid));
       const querySnapshot = await getDocs(q);
 
@@ -82,6 +86,9 @@ export const AuthScreen = () => {
   return (
     <View style={styles.wholeContainer}>
       <View style={styles.resonateContainer}>
+        {status === loadingStatuses.LOADING ? (
+          <ActivityIndicator size={50} color="#0078D7" />
+        ) : null}
         <Text style={styles.resonateText}>Resonate</Text>
       </View>
 
