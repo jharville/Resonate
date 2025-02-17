@@ -10,6 +10,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@hookform/resolvers": "^4.1.0",
     "@react-native-async-storage/async-storage": "^1.24.0",
     "@react-native-documents/picker": "^10.1.0",
     "@react-native-documents/viewer": "^1.0.0",
@@ -42,7 +43,8 @@
     "react-native-track-player": "^4.1.1",
     "react-native-vector-icons": "^10.2.0",
     "react-native-video": "^6.8.2",
-    "react-redux": "^9.2.0"
+    "react-redux": "^9.2.0",
+    "yup": "^1.0.0-alpha.3"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

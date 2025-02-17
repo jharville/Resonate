@@ -9,11 +9,16 @@ import {auth, db} from '../../firebaseConfig';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {loadingStatuses, useLoadingStatus} from '../useLoadingStatuses';
+import FontAwesome from 'react-native-vector-icons/FontAwesome6';
+import {useForm} from 'react-hook-form';
+import {yupResolver} from '@hookform/resolvers/yup';
+import * as yup from 'yup';
 
 export const AuthScreen = () => {
   const {status, startLoading} = useLoadingStatus();
   const [error, setError] = useState<string | null>(null);
   const [isSigningUp, setIsSigningUp] = useState<boolean>(false);
+  const [passwordVisible, setPasswordVisible] = useState(false);
   const [form, setForm] = useState({
     displayName: '',
     email: '',
@@ -86,9 +91,7 @@ export const AuthScreen = () => {
   return (
     <View style={styles.wholeContainer}>
       <View style={styles.resonateContainer}>
-        {status === loadingStatuses.LOADING ? (
-          <ActivityIndicator size={50} color="#0078D7" />
-        ) : null}
+        <FontAwesome name="record-vinyl" size={80} color="#0078D7" />
         <Text style={styles.resonateText}>Resonate</Text>
       </View>
 
@@ -99,8 +102,9 @@ export const AuthScreen = () => {
         <>
           <View style={styles.inputAndIconRow}>
             <MaterialIcons name="email" style={{paddingHorizontal: 5}} size={30} color="#121329" />
+            {/* Email */}
             <TextInput
-              style={styles.input}
+              style={styles.inputEmail}
               placeholder="Email"
               value={form.email}
               autoCapitalize="none"
@@ -111,14 +115,21 @@ export const AuthScreen = () => {
 
           <View style={styles.inputAndIconRow}>
             <Ionicons style={{paddingHorizontal: 5}} name="lock-closed" size={30} color="#121329" />
+            {/* Password */}
             <TextInput
               style={styles.input}
               placeholder="Password"
               value={form.password}
-              secureTextEntry
+              secureTextEntry={!passwordVisible}
               autoCapitalize="none"
               onChangeText={text => handleInputFieldChange('password', text)}
             />
+
+            <TouchableOpacity
+              style={{padding: 10}}
+              onPress={() => setPasswordVisible(!passwordVisible)}>
+              <Ionicons name={passwordVisible ? 'eye-off' : 'eye'} size={24} color="#121329" />
+            </TouchableOpacity>
           </View>
         </>
       ) : (
@@ -126,8 +137,9 @@ export const AuthScreen = () => {
           <View style={styles.signUpContainer}>
             <View style={styles.inputAndIconRow}>
               <Ionicons style={{paddingHorizontal: 5}} name="person" size={30} color="#121329" />
+              {/* Display Name */}
               <TextInput
-                style={styles.input}
+                style={styles.inputEmail}
                 placeholder="Display Name"
                 value={form.displayName}
                 autoCapitalize="none"
@@ -142,8 +154,9 @@ export const AuthScreen = () => {
                 size={30}
                 color="#121329"
               />
+              {/* Email */}
               <TextInput
-                style={styles.input}
+                style={styles.inputEmail}
                 placeholder="Email"
                 value={form.email}
                 autoCapitalize="none"
@@ -159,8 +172,9 @@ export const AuthScreen = () => {
                 size={30}
                 color="#121329"
               />
+              {/* Confirm Email  */}
               <TextInput
-                style={styles.input}
+                style={styles.inputEmail}
                 placeholder="Confirm Email"
                 value={form.confirmEmail}
                 autoCapitalize="none"
@@ -176,14 +190,20 @@ export const AuthScreen = () => {
                 size={30}
                 color="#121329"
               />
+              {/* Password */}
               <TextInput
                 style={styles.input}
                 placeholder="Password"
                 value={form.password}
-                secureTextEntry
+                secureTextEntry={!passwordVisible}
                 autoCapitalize="none"
                 onChangeText={text => handleInputFieldChange('password', text)}
               />
+              <TouchableOpacity
+                style={{padding: 10}}
+                onPress={() => setPasswordVisible(!passwordVisible)}>
+                <Ionicons name={passwordVisible ? 'eye-off' : 'eye'} size={24} color="#121329" />
+              </TouchableOpacity>
             </View>
 
             <View style={styles.inputAndIconRow}>
@@ -193,14 +213,20 @@ export const AuthScreen = () => {
                 size={30}
                 color="#121329"
               />
+              {/*Confirm Password */}
               <TextInput
                 style={styles.input}
                 placeholder="Confirm Password"
                 value={form.confirmPassword}
-                secureTextEntry
+                secureTextEntry={!passwordVisible}
                 autoCapitalize="none"
                 onChangeText={text => handleInputFieldChange('confirmPassword', text)}
               />
+              <TouchableOpacity
+                style={{padding: 10}}
+                onPress={() => setPasswordVisible(!passwordVisible)}>
+                <Ionicons name={passwordVisible ? 'eye-off' : 'eye'} size={24} color="#121329" />
+              </TouchableOpacity>
             </View>
           </View>
         </>
@@ -224,6 +250,9 @@ export const AuthScreen = () => {
           </TouchableOpacity>
         </View>
       </View>
+      <View style={styles.loadingContainer}>
+        {status === loadingStatuses.LOADING && <ActivityIndicator size={60} color="#0078D7" />}
+      </View>
     </View>
   );
 };
@@ -244,6 +273,7 @@ const styles = StyleSheet.create({
   resonateContainer: {
     justifyContent: 'center',
     alignItems: 'center',
+    paddingBottom: 10,
   },
 
   resonateText: {
@@ -258,7 +288,7 @@ const styles = StyleSheet.create({
     color: '#f4f4f4',
   },
 
-  input: {
+  inputEmail: {
     flex: 1,
     borderWidth: 1,
     borderColor: '#ccc',
@@ -267,6 +297,15 @@ const styles = StyleSheet.create({
     color: 'black',
     borderTopRightRadius: 5,
     borderBottomRightRadius: 5,
+  },
+
+  input: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    paddingHorizontal: 10,
+    backgroundColor: '#f4f4f4',
+    color: 'black',
   },
 
   inputAndIconRow: {
@@ -304,6 +343,12 @@ const styles = StyleSheet.create({
   toggle: {
     alignItems: 'center',
     color: '#f4f4f4',
+  },
+
+  loadingContainer: {
+    height: 80,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 
   error: {
