@@ -1,54 +1,37 @@
 import React, {useEffect, useState} from 'react';
-import {
-  StyleSheet,
-  View,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  ActivityIndicator,
-} from 'react-native';
+import {StyleSheet, View, ScrollView, ActivityIndicator, Text} from 'react-native';
 import {CollectionStackScreenProps} from '../navigation/types/navigation.types';
 import {Folder} from '../components/Folder';
 import firestore from '@react-native-firebase/firestore';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../store';
 import {UploadFolderModal} from '../components/UploadFolderModal';
+import {loadingStatuses, useLoadingStatus} from '../useLoadingStatuses';
 
 // This is the "Collection Screen". All unique Folders will be listed in this stack.
 
 export const CollectionScreen = ({navigation}: CollectionStackScreenProps<'CollectionScreen'>) => {
-  const [folders, setFolders] = useState<{id: string; name: string}[]>([]);
-  const [loading, setLoading] = useState(true);
+  const {status, startLoading, setDoneLoading} = useLoadingStatus();
+  const [folders, setFolders] = useState<
+    {
+      artistName: string;
+      id: string;
+      name: string;
+    }[]
+  >([]);
 
   const user = useSelector((state: RootState) => state.auth.user);
 
-  const handleFolderClick = (folderId: string) => {
-    navigation.navigate('PlayerScreen', {folderId});
+  const handleFolderClick = (folder: {id: string; name: string; artistName: string}) => {
+    navigation.navigate('PlayerScreen', {
+      folderId: folder.id,
+      name: folder.name,
+      artistName: folder.artistName,
+    });
   };
-
-  // Creates a New Folder in Firestore
-  const handleCreateFolder = async () => {
-    if (!user) {
-      console.log('user not registered');
-      return;
-    }
-
-    try {
-      const newFolder = {
-        name: `Folder ${folders.length + 1}`,
-        createdAt: firestore.FieldValue.serverTimestamp(),
-      };
-
-      await firestore().collection('users').doc(user.uid).collection('folders').add(newFolder);
-    } catch (error) {
-      console.error('Error creating folder:', error);
-    }
-  };
-
+  // Real-time listener for folder changes
   useEffect(() => {
     if (!user) return;
-
-    // Real-time listener for folder changes
     const unsubscribe = firestore()
       .collection('users')
       .doc(user.uid)
@@ -58,10 +41,10 @@ export const CollectionScreen = ({navigation}: CollectionStackScreenProps<'Colle
         const folderList = snapshot.docs.map(doc => ({
           id: doc.id,
           name: doc.data().name || 'Untitled',
+          artistName: doc.data().artistName || 'untitled',
         }));
 
         setFolders(folderList);
-        setLoading(false);
       });
 
     return () => unsubscribe();
@@ -69,28 +52,29 @@ export const CollectionScreen = ({navigation}: CollectionStackScreenProps<'Colle
 
   return (
     <View style={styles.wholePage}>
-      <TouchableOpacity style={styles.createButton} onPress={handleCreateFolder}>
-        <Text style={styles.buttonText}>+ Create Folder</Text>
-      </TouchableOpacity>
-
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}>
-        {loading ? (
-          <ActivityIndicator size="large" color="#0078D7" />
-        ) : (
-          folders.map(folder => (
+      {status === loadingStatuses.LOADING ? (
+        <ActivityIndicator size="large" color="#0078D7" />
+      ) : folders.length === 0 ? (
+        <View style={styles.noFoldersContainer}>
+          <Text style={styles.addAFolderText}>Add a folder!</Text>
+        </View>
+      ) : (
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}>
+          {folders.map(folder => (
             <View key={folder.id} style={styles.folderContainer}>
               <Folder
                 folderName={folder.name}
-                artistName={user?.email || 'Unknown Artist'}
-                onPress={() => handleFolderClick(folder.id)}
+                artistName={folder.artistName}
+                onPress={() => handleFolderClick(folder)}
               />
             </View>
-          ))
-        )}
-      </ScrollView>
+          ))}
+        </ScrollView>
+      )}
+
       <UploadFolderModal />
     </View>
   );
@@ -100,21 +84,23 @@ const styles = StyleSheet.create({
   wholePage: {
     flex: 1,
     backgroundColor: '#151314',
-    padding: 20,
+    paddingHorizontal: 20,
+    paddingTop: 20,
   },
-  createButton: {
-    backgroundColor: '#0078D7',
-    padding: 12,
-    borderRadius: 5,
+  noFoldersContainer: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 20,
   },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
+
+  addAFolderText: {
+    color: 'white',
+    fontSize: 28,
+    fontWeight: 'bold',
   },
+
   folderContainer: {
-    paddingVertical: 10,
+    paddingVertical: 20,
   },
   scrollContent: {
     paddingBottom: 20,

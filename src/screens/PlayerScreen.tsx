@@ -6,14 +6,16 @@ import {useDispatch} from 'react-redux';
 import {setActiveTrack} from '../redux/playerSlice.tsx';
 import {UploadSong} from '../components/UploadSong.tsx';
 import {SongUploadProgress} from '../components/SongUploadProgress.tsx';
+import {CollectionStackScreenProps} from '../navigation/types/navigation.types.ts';
 
 // This is the "Player Screen" this will only render the player at the bottom
 // and songs listed from Firebase per User.
 // No folder funcitonality
 
-export const PlayerScreen = () => {
+export const PlayerScreen = ({route}: CollectionStackScreenProps<'PlayerScreen'>) => {
   const dispatch = useDispatch();
-  const songs = useFetchSongs();
+  const {folderId} = route.params;
+  const songs = useFetchSongs(folderId);
 
   const handleSelectSong = (song: any) => {
     dispatch(setActiveTrack(song)); // Sets selected track in Redux
@@ -30,7 +32,7 @@ export const PlayerScreen = () => {
           <SongList songs={songs} onSelectSong={handleSelectSong} />
         </View>
       </ScrollView>
-      <UploadSong />
+      <UploadSong folderId={folderId} />
     </View>
   );
 };
