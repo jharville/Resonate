@@ -4,7 +4,8 @@ A modern music player/file host with Redux and Backend (Firebase).
 THIS IS A WIP.
 
 ![Screen Shot 2025-02-17 at 3 18 46 PM](https://github.com/user-attachments/assets/0f3184cd-1d8e-4d6c-8487-251881a6fe1f)
-![Screen Shot 2025-02-10 at 6 19 07 PM](https://github.com/user-attachments/assets/85caff1f-5112-4a74-b95e-4f8db5db6331)
+![Screen Shot 2025-02-17 at 3 22 09 PM](https://github.com/user-attachments/assets/2733fe1a-f9fb-4625-9ff5-fa6dffc684ac)
+![Screen Shot 2025-02-17 at 3 22 32 PM](https://github.com/user-attachments/assets/421a61c5-d770-4632-a6bb-2315eaa0271d)
 ![Screen Shot 2025-02-10 at 6 19 47 PM](https://github.com/user-attachments/assets/c566c2fc-0576-4589-892c-bd05a8afa5be)
 
 
