@@ -1,10 +1,9 @@
 
 # Resonate
-A music player/file host with Redux and Backend (Firebase).
+A modern music player/file host with Redux and Backend (Firebase).
 THIS IS A WIP.
 
-
-![Screen Shot 2025-02-10 at 6 18 12 PM](https://github.com/user-attachments/assets/8c0eefbd-127b-45f7-ba51-3ce4870dcb95)
+![Screen Shot 2025-02-17 at 3 18 46 PM](https://github.com/user-attachments/assets/0f3184cd-1d8e-4d6c-8487-251881a6fe1f)
 ![Screen Shot 2025-02-10 at 6 19 07 PM](https://github.com/user-attachments/assets/85caff1f-5112-4a74-b95e-4f8db5db6331)
 ![Screen Shot 2025-02-10 at 6 19 47 PM](https://github.com/user-attachments/assets/c566c2fc-0576-4589-892c-bd05a8afa5be)
 
