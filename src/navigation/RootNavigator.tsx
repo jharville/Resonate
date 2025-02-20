@@ -38,13 +38,13 @@ const RootNavigator = () => {
     return () => unsubscribe();
   }, []);
 
-  // // This useEffect is for TrackPlayer and it runs when the component mounts
-  // //  and whenever `isSetup` or `setupPlayer` changes
-  // useEffect(() => {
-  //   if (!isSetup) {
-  //     setupPlayer();
-  //   }
-  // }, [isSetup, setupPlayer]);
+  // This useEffect is for TrackPlayer and it runs when the component mounts
+  //  and whenever `isSetup` or `setupPlayer` changes
+  useEffect(() => {
+    if (!isSetup) {
+      setupPlayer();
+    }
+  }, [isSetup, setupPlayer]);
 
   if (isLoading) {
     return (
