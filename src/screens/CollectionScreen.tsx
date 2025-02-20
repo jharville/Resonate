@@ -7,7 +7,15 @@ import {useSelector} from 'react-redux';
 import {RootState} from '../../store';
 import {UploadFolderModal} from '../components/UploadFolderModal';
 import {loadingStatuses, useLoadingStatus} from '../useLoadingStatuses';
-
+import {
+  collection,
+  doc,
+  getFirestore,
+  onSnapshot,
+  query,
+  orderBy,
+} from '@react-native-firebase/firestore';
+import {db} from '../../firebaseConfig';
 // This is the "Collection Screen". All unique Folders will be listed in this stack.
 
 export const CollectionScreen = ({navigation}: CollectionStackScreenProps<'CollectionScreen'>) => {
@@ -29,26 +37,46 @@ export const CollectionScreen = ({navigation}: CollectionStackScreenProps<'Colle
       artistName: folder.artistName,
     });
   };
-  // Real-time listener for folder changes
+
   useEffect(() => {
     if (!user) return;
-    const unsubscribe = firestore()
-      .collection('users')
-      .doc(user.uid)
-      .collection('folders')
-      .orderBy('createdAt', 'desc')
-      .onSnapshot(snapshot => {
-        const folderList = snapshot.docs.map(doc => ({
-          id: doc.id,
-          name: doc.data().name || 'Untitled',
-          artistName: doc.data().artistName || 'untitled',
-        }));
 
-        setFolders(folderList);
-      });
+    const foldersRef = collection(db, 'users', user.uid, 'folders');
+    const q = query(foldersRef, orderBy('createdAt', 'desc'));
+
+    const unsubscribe = onSnapshot(q, snapshot => {
+      const folderList = snapshot.docs.map(doc => ({
+        id: doc.id,
+        name: doc.data().name || 'Untitled',
+        artistName: doc.data().artistName || 'untitled',
+      }));
+
+      setFolders(folderList);
+    });
 
     return () => unsubscribe();
   }, [user]);
+
+  // Real-time listener for folder changes
+  // useEffect(() => {
+  //   if (!user) return;
+  //   const unsubscribe = firestore()
+  //     .collection('users')
+  //     .doc(user.uid)
+  //     .collection('folders')
+  //     .orderBy('createdAt', 'desc')
+  //     .onSnapshot(snapshot => {
+  //       const folderList = snapshot.docs.map(doc => ({
+  //         id: doc.id,
+  //         name: doc.data().name || 'Untitled',
+  //         artistName: doc.data().artistName || 'untitled',
+  //       }));
+
+  //       setFolders(folderList);
+  //     });
+
+  //   return () => unsubscribe();
+  // }, [user]);
 
   return (
     <View style={styles.wholePage}>

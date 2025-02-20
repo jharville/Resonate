@@ -1,8 +1,14 @@
 import {useEffect, useState} from 'react';
-import firestore from '@react-native-firebase/firestore';
-import storage from '@react-native-firebase/storage';
 import {useSelector} from 'react-redux';
 import {RootState} from '../store';
+import {
+  collection,
+  onSnapshot,
+  orderBy,
+  query,
+  getFirestore,
+} from '@react-native-firebase/firestore';
+import {getDownloadURL, getStorage, ref} from '@react-native-firebase/storage';
 
 export const useFetchSongs = (folderId: string | null) => {
   const [songs, setSongs] = useState<Song[]>([]);
@@ -11,42 +17,37 @@ export const useFetchSongs = (folderId: string | null) => {
   useEffect(() => {
     if (!folderId || !user) return;
 
-    const unsubscribe = firestore()
-      .collection('users')
-      .doc(user.uid)
-      .collection('folders')
-      .doc(folderId)
-      .collection('songs')
-      .orderBy('createdAt', 'desc')
-      .onSnapshot(async snapshot => {
-        if (snapshot.empty) {
-          console.log('No songs found in Firestore');
-          setSongs([]);
-          return;
-        }
+    const songsRef = collection(getFirestore(), 'users', user.uid, 'folders', folderId, 'songs');
+    const q = query(songsRef, orderBy('createdAt', 'desc'));
 
-        const songList = await Promise.all(
-          snapshot.docs.map(async doc => {
-            const songData = doc.data();
+    const unsubscribe = onSnapshot(q, async snapshot => {
+      if (snapshot.empty) {
+        console.log('No songs found in Firestore');
+        setSongs([]);
+        return;
+      }
 
-            try {
-              const storageRef = storage().ref(songData.storagePath);
-              const url = await storageRef.getDownloadURL();
+      const songList = await Promise.all(
+        snapshot.docs.map(async doc => {
+          const songData = doc.data();
 
-              return {
-                id: doc.id,
-                name: songData.name,
-                url,
-              };
-            } catch (error) {
-              console.error(`Error fetching song URL for ${songData.name}`, error);
-              return null;
-            }
-          }),
-        );
+          try {
+            const url = await getDownloadURL(ref(getStorage(), songData.storagePath));
 
-        setSongs(songList.filter(song => song !== null));
-      });
+            return {
+              id: doc.id,
+              name: songData.name,
+              url,
+            };
+          } catch (error) {
+            console.error(`Error fetching song URL for ${songData.name}`, error);
+            return null;
+          }
+        }),
+      );
+
+      setSongs(songList.filter(song => song !== null) as Song[]);
+    });
 
     return () => unsubscribe();
   }, [folderId, user]);

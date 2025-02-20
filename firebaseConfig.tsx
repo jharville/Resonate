@@ -1,7 +1,7 @@
-// import { addDoc } from '@react-native-firebase/firestore';
-import {initializeApp} from 'firebase/app';
-import {getAuth} from 'firebase/auth';
-import {getFirestore, collection, getDocs, addDoc, initializeFirestore} from 'firebase/firestore';
+import {getApp, getApps, initializeApp} from '@react-native-firebase/app';
+import {getAuth} from '@react-native-firebase/auth';
+import {getFirestore} from '@react-native-firebase/firestore';
+import {getStorage} from '@react-native-firebase/storage';
 
 export const firebaseConfig = {
   apiKey: 'AIzaSyCGs58mMfrod4S0orRNMP0azBaayc8tvN4',
@@ -12,12 +12,15 @@ export const firebaseConfig = {
   appId: '1:674318448062:android:a2945117ba406e8e8a35ef',
 };
 
-const app = initializeApp(firebaseConfig);
+const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
 
+// Initializes Firebase Authentication
 const auth = getAuth(app);
 
-const db = initializeFirestore(app, {
-  experimentalForceLongPolling: true,
-});
+// Initializes Firebase Storage (for large files e.g. WAV., mp3)
+const storageRef = getStorage(app);
 
-export {db, auth};
+// Initializes Firestore (database)
+const db = getFirestore(app);
+
+export {app, auth, db, storageRef};

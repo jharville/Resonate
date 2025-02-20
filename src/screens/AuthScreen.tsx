@@ -1,7 +1,20 @@
 import React, {useState} from 'react';
 import {View, Text, TextInput, StyleSheet, TouchableOpacity, ActivityIndicator} from 'react-native';
-import {doc, setDoc, serverTimestamp, query, collection, where, getDocs} from 'firebase/firestore';
-import {createUserWithEmailAndPassword, signInWithEmailAndPassword, User} from 'firebase/auth';
+import {
+  serverTimestamp,
+  query,
+  collection,
+  where,
+  getDocs,
+  doc,
+  setDoc,
+} from '@react-native-firebase/firestore';
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  FirebaseAuthTypes,
+  updateProfile,
+} from '@react-native-firebase/auth';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootNavigatorParamList} from '../navigation/types/navigation.types';
@@ -13,6 +26,16 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome6';
 import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import {date, InferType, number, object, string} from 'yup';
+
+// let userSchema = object({
+//   name: string().required(),
+//   age: number().required().positive().integer(),
+//   email: string().email(),
+//   website: string().url().nullable(),
+//   createdOn: date().default(() => new Date()),
+// });
+// type User = InferType<typeof userSchema>;
 
 export const AuthScreen = () => {
   const {status, startLoading} = useLoadingStatus();
@@ -29,11 +52,11 @@ export const AuthScreen = () => {
 
   const navigation = useNavigation<NativeStackNavigationProp<RootNavigatorParamList>>();
 
-  const navigateToCollectionStack = (user: User, folders: any[]): void => {
+  const navigateToCollectionStack = (user: FirebaseAuthTypes.User, folders: any[]): void => {
     const userData = {
       uid: user.uid,
       email: user.email,
-      displayName: user.displayName || '',
+      displayName: user.displayName,
     };
     navigation.reset({
       index: 0,
@@ -45,20 +68,17 @@ export const AuthScreen = () => {
     setForm(prev => ({...prev, [field]: value}));
   };
 
+  // Sign In
   const handleSignIn = async (): Promise<void> => {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, form.email, form.password);
       const user = userCredential.user;
-
       if (!user) return;
-
       startLoading();
 
-      // Fetches user's music folders from Firestore
       const q = query(collection(db, 'folders'), where('userId', '==', user.uid));
       const querySnapshot = await getDocs(q);
 
-      // Converts retrieved Firestore data to an array
       const folders = querySnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data(),
@@ -69,19 +89,22 @@ export const AuthScreen = () => {
       setError(error.message);
     }
   };
+
+  // Sign Up
   const handleSignUp = async (): Promise<void> => {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, form.email, form.password);
       const user = userCredential.user;
-
       if (user) {
+        await updateProfile(user, {
+          displayName: form.displayName,
+        });
         await setDoc(doc(db, 'users', user.uid), {
           displayName: form.displayName,
           email: user.email,
           createdAt: serverTimestamp(),
         });
       }
-
       navigateToCollectionStack(user, []);
     } catch (error: any) {
       setError(error.message);
