@@ -2,6 +2,11 @@
 #
 .DS_Store
 
+
+# Private Keys
+privatekeys.ts
+
+
 # Xcode
 #
 build/

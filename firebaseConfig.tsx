@@ -2,9 +2,10 @@ import {getApp, getApps, initializeApp} from '@react-native-firebase/app';
 import {getAuth} from '@react-native-firebase/auth';
 import {getFirestore} from '@react-native-firebase/firestore';
 import {getStorage} from '@react-native-firebase/storage';
+import {FIREBASE_API_KEY} from './privatekeys';
 
 export const firebaseConfig = {
-  apiKey: 'AIzaSyCGs58mMfrod4S0orRNMP0azBaayc8tvN4',
+  apiKey: FIREBASE_API_KEY,
   authDomain: 'resonate-36c63.firebaseapp.com',
   projectId: 'resonate-36c63',
   storageBucket: 'resonate-36c63.appspot.com',
