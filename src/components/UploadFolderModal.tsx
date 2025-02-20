@@ -10,7 +10,6 @@ import {
   Animated,
   Easing,
   Dimensions,
-  ViewStyle,
 } from 'react-native';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Feather from 'react-native-vector-icons/Feather';
@@ -275,11 +274,11 @@ const styles = StyleSheet.create({
   },
 
   buttonsContainer: {
-    paddingTop: 20,
+    paddingTop: 40,
     paddingHorizontal: 30,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    gap: 20,
+    gap: 40,
   },
 
   cancelButton: {
