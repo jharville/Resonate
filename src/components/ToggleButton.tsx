@@ -8,6 +8,7 @@ export const ToggleButton = ({
   selectedButtonStyle,
   textStyle,
   selectedTextStyle,
+  containerStyle,
 }: ToggleButtonProps) => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
 
@@ -18,7 +19,7 @@ export const ToggleButton = ({
 
   return (
     <View style={styles.forecastTextAndButtons}>
-      <View style={styles.optionSelectorContainer}>
+      <View style={[styles.optionSelectorContainer, containerStyle]}>
         {buttonOptions.map((option, index) => (
           <TouchableOpacity
             key={index}
@@ -97,4 +98,5 @@ type ToggleButtonProps = {
   selectedButtonStyle?: ViewStyle; // Custom styling for selected button
   textStyle?: TextStyle; // Custom styling for text
   selectedTextStyle?: TextStyle; // Custom styling for selected text
+  containerStyle?: ViewStyle; // Custom styling for the button container
 };

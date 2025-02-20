@@ -14,13 +14,9 @@ import {
 } from 'react-native';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Feather from 'react-native-vector-icons/Feather';
-import {auth} from '../../firebaseConfig';
-import firestore from '@react-native-firebase/firestore';
+import {auth, db} from '../../firebaseConfig';
+import {collection, doc, serverTimestamp, setDoc} from '@react-native-firebase/firestore';
 import {ToggleButton} from './ToggleButton';
-
-const buttonStyle: ViewStyle = {
-  borderRadius: 10,
-};
 
 export const UploadFolderModal = () => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -52,12 +48,12 @@ export const UploadFolderModal = () => {
   const handleCreateFolder = async () => {
     const user = auth.currentUser;
     if (!user) {
-      console.log('User not registered');
+      console.log('User is not registered');
       return;
     }
 
     if (!folderName.trim() || !artistName.trim()) {
-      Alert.alert('Error', 'Please enter both a folder name and an artist name.');
+      Alert.alert('Error', 'Please enter both a Folder Name and an Artist Name.');
       return;
     }
 
@@ -65,9 +61,11 @@ export const UploadFolderModal = () => {
       const newFolder = {
         name: folderName.trim(),
         artistName: artistName.trim(),
-        createdAt: firestore.FieldValue.serverTimestamp(),
+        createdAt: serverTimestamp(),
       };
-      await firestore().collection('users').doc(user.uid).collection('folders').add(newFolder);
+      // await firestore().collection('users').doc(user.uid).collection('folders').add(newFolder);
+      await setDoc(doc(collection(db, 'users', user.uid, 'folders')), newFolder);
+
       setFolderName('');
       setArtistName('');
       closeModal();
@@ -91,7 +89,7 @@ export const UploadFolderModal = () => {
           <View style={styles.modalContent}>
             {/*  */}
             <View style={styles.modalTitleContainer}>
-              <Text style={styles.modalTitleText}>Create A New Folder</Text>
+              <Text style={styles.modalTitleText}>Create A New Folder!</Text>
             </View>
 
             <View style={styles.inputFieldsAndButtons}>
@@ -123,46 +121,47 @@ export const UploadFolderModal = () => {
                   </Text>
                 </View>
 
-                <View style={styles.permissionIconSelectorRow}>
-                  <Text style={styles.permissionParamsText}>Add Files</Text>
+                <View style={styles.permissionsParamsContainer}>
+                  <View style={styles.permissionIconSelectorRow}>
+                    <Text style={styles.permissionParamsText}>Add Files</Text>
 
-                  <ToggleButton
-                    buttonStyle={buttonStyle}
-                    buttonOptions={['On', 'Off']}
-                    onSelectOption={() => {
-                      null;
-                    }}
-                  />
-                </View>
+                    <ToggleButton
+                      buttonOptions={['On', 'Off']}
+                      onSelectOption={() => {
+                        null;
+                      }}
+                    />
+                  </View>
 
-                <View style={styles.permissionIconSelectorRow}>
-                  <Text style={styles.permissionParamsText}>Download</Text>
-                  <ToggleButton
-                    buttonOptions={['On', 'Off']}
-                    onSelectOption={() => {
-                      null;
-                    }}
-                  />
-                </View>
+                  <View style={styles.permissionIconSelectorRow}>
+                    <Text style={styles.permissionParamsText}>Download</Text>
+                    <ToggleButton
+                      buttonOptions={['On', 'Off']}
+                      onSelectOption={() => {
+                        null;
+                      }}
+                    />
+                  </View>
 
-                <View style={styles.permissionIconSelectorRow}>
-                  <Text style={styles.permissionParamsText}>Comment</Text>
-                  <ToggleButton
-                    buttonOptions={['On', 'Off']}
-                    onSelectOption={() => {
-                      null;
-                    }}
-                  />
-                </View>
+                  <View style={styles.permissionIconSelectorRow}>
+                    <Text style={styles.permissionParamsText}>Comment</Text>
+                    <ToggleButton
+                      buttonOptions={['On', 'Off']}
+                      onSelectOption={() => {
+                        null;
+                      }}
+                    />
+                  </View>
 
-                <View style={styles.permissionIconSelectorRow}>
-                  <Text style={styles.permissionParamsText}>Share</Text>
-                  <ToggleButton
-                    buttonOptions={['On', 'Off']}
-                    onSelectOption={() => {
-                      null;
-                    }}
-                  />
+                  <View style={styles.permissionIconSelectorRow}>
+                    <Text style={styles.permissionParamsText}>Share</Text>
+                    <ToggleButton
+                      buttonOptions={['On', 'Off']}
+                      onSelectOption={() => {
+                        null;
+                      }}
+                    />
+                  </View>
                 </View>
               </View>
 
@@ -243,11 +242,14 @@ const styles = StyleSheet.create({
   },
   permissionsConatiner: {
     gap: 10,
+    paddingHorizontal: 10,
   },
   permissionsText: {
     color: 'white',
     fontWeight: 700,
   },
+
+  permissionsParamsContainer: {paddingHorizontal: 10, gap: 5},
 
   permissionTextAndIcon: {
     flexDirection: 'row',
@@ -273,32 +275,33 @@ const styles = StyleSheet.create({
   },
 
   buttonsContainer: {
-    paddingTop: 10,
-    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingHorizontal: 30,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    // width: '100%',
     gap: 20,
   },
 
   cancelButton: {
     flex: 1,
-    padding: 10,
+    paddingVertical: 15,
     backgroundColor: 'gray',
-    borderRadius: 5,
+    borderRadius: 30,
     alignItems: 'center',
+    justifyContent: 'center',
   },
 
   createButton: {
     flex: 1,
-    padding: 10,
+    paddingVertical: 15,
     backgroundColor: '#0078D7',
-    borderRadius: 5,
+    borderRadius: 30,
     alignItems: 'center',
+    justifyContent: 'center',
   },
 
   buttonText: {
     color: 'white',
-    fontSize: 16,
+    fontSize: 20,
   },
 });

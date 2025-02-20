@@ -1,3 +1,12 @@
+// {
+//   "extends": "@react-native/typescript-config/tsconfig.json"
+// }
+
 {
-  "extends": "@react-native/typescript-config/tsconfig.json"
+  "compilerOptions": {
+    "paths": {
+      "@firebase/auth": ["./node_modules/@firebase/auth/dist/index.rn.d.ts"]
+    }
+  },
+  "extends": ["expo/tsconfig.base", "@react-native/typescript-config/tsconfig.json"]
 }
