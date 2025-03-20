@@ -1,5 +1,5 @@
 import React, {useRef, useEffect} from 'react';
-import {Text, TouchableOpacity, Animated, StyleSheet, Dimensions} from 'react-native';
+import {Text, TouchableOpacity, Animated, StyleSheet, Dimensions, View} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../../store';
 import {closeProfileModal} from '../../redux/profileModalSlice';
@@ -55,29 +55,33 @@ export const ProfileModal = () => {
   return (
     <>
       <Animated.View style={[styles.menu, {transform: [{translateX: slideAnim}]}]}>
-        <TouchableOpacity style={styles.menuItem} onPress={() => dispatch(closeProfileModal())}>
-          <Ionicons name="person" size={30} color="#fff" />
-          <Text style={styles.menuText}>{userName}</Text>
-        </TouchableOpacity>
+        <View style={styles.itemsContainer}>
+          <TouchableOpacity style={styles.menuItem} onPress={() => dispatch(closeProfileModal())}>
+            <Ionicons name="person" size={30} color="#fff" />
+            <Text style={styles.menuText}>{userName}</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity style={styles.menuItem} onPress={() => dispatch(closeProfileModal())}>
-          <Ionicons name="person-outline" size={30} color="#fff" />
-          <Text style={styles.menuText}>Edit Profile</Text>
-        </TouchableOpacity>
+          <TouchableOpacity style={styles.menuItem} onPress={() => dispatch(closeProfileModal())}>
+            <Ionicons name="person-outline" size={30} color="#fff" />
+            <Text style={styles.menuText}>Edit Profile</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity style={styles.menuItem} onPress={() => dispatch(closeProfileModal())}>
-          <FontAwesome name="cog" size={30} color="#fff" />
-          <Text style={styles.menuText}>Preferences</Text>
-        </TouchableOpacity>
+          <TouchableOpacity style={styles.menuItem} onPress={() => dispatch(closeProfileModal())}>
+            <FontAwesome name="cog" size={30} color="#fff" />
+            <Text style={styles.menuText}>Preferences</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity style={styles.menuItem} onPress={handleSignOut}>
-          <FontAwesome name="sign-out" size={30} color="#fff" />
-          <Text style={styles.menuText}>Sign Out</Text>
-        </TouchableOpacity>
+          <TouchableOpacity style={styles.menuItem} onPress={handleSignOut}>
+            <FontAwesome name="sign-out" size={30} color="#fff" />
+            <Text style={styles.menuText}>Sign Out</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity style={styles.closeButton} onPress={() => dispatch(closeProfileModal())}>
-          <Text style={styles.closeText}>Close</Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.closeButton}
+            onPress={() => dispatch(closeProfileModal())}>
+            <Text style={styles.closeText}>Close</Text>
+          </TouchableOpacity>
+        </View>
       </Animated.View>
     </>
   );
@@ -91,16 +95,19 @@ const styles = StyleSheet.create({
     width: 200,
     height: '100%',
     backgroundColor: '#333',
-    paddingTop: 50,
     paddingHorizontal: 20,
+    justifyContent: 'center',
   },
 
-  menuItem: {paddingVertical: 15, flexDirection: 'row', gap: 10, alignItems: 'center'},
+  itemsContainer: {
+    gap: 30,
+  },
+
+  menuItem: {flexDirection: 'row', gap: 10, alignItems: 'center'},
 
   menuText: {color: 'white', fontSize: 18},
 
   closeButton: {
-    marginTop: 20,
     padding: 10,
     backgroundColor: '#FF3B30',
     borderRadius: 5,
