@@ -6,6 +6,7 @@ import {setActiveTrack} from '../redux/playerSlice';
 import {PressableScaleButton} from './PressableScaleButton';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome6';
+import {isIOS} from '../constants.ts';
 
 //TrackPlayer States
 /*
@@ -59,10 +60,8 @@ export const AudioPlayer = ({activeTrack}: AudioPlayerProps) => {
     return <MaterialIcons name="play-circle-outline" size={50} color="#fff" />;
   };
 
-  // console.log('Track is:', playbackState);
-
   return (
-    <View style={styles.audioPlayer}>
+    <View style={isIOS ? styles.iosAudioPlayer : styles.androidAudioPlayer}>
       <View style={styles.vinylAndInfoContainer}>
         <View style={styles.recordContainer}>
           <FontAwesome name="record-vinyl" size={40} color="#0078D7" />
@@ -85,7 +84,7 @@ export const AudioPlayer = ({activeTrack}: AudioPlayerProps) => {
 };
 
 const styles = StyleSheet.create({
-  audioPlayer: {
+  androidAudioPlayer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -95,33 +94,50 @@ const styles = StyleSheet.create({
     borderTopWidth: 2,
     borderColor: '#26272b',
   },
+
+  iosAudioPlayer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 25,
+    paddingTop: 10,
+    paddingBottom: 10,
+    backgroundColor: '#151314',
+    borderTopWidth: 2,
+    borderColor: '#26272b',
+  },
+
   vinylAndInfoContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
   },
+
   infoContainer: {
     flex: 1,
     paddingLeft: 10,
   },
+
   rightSideButtons: {
     paddingLeft: 10,
     flexDirection: 'row',
     justifyContent: 'flex-end',
   },
+
   trackFolderName: {
     color: 'white',
     fontSize: 13,
   },
+
   trackTitle: {
     color: 'white',
     fontSize: 15,
     fontWeight: 700,
   },
+
   recordContainer: {
     backgroundColor: '#26272b',
     paddingVertical: 7,
-
     paddingHorizontal: 10,
     borderRadius: 4,
   },

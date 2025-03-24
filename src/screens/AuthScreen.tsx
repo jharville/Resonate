@@ -27,6 +27,7 @@ import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import {date, InferType, number, object, string} from 'yup';
+import {isIOS} from '../constants.ts';
 
 // let userSchema = object({
 //   name: string().required(),
@@ -127,9 +128,10 @@ export const AuthScreen = () => {
             <MaterialIcons name="email" style={{paddingHorizontal: 5}} size={30} color="#121329" />
             {/* Email */}
             <TextInput
-              style={styles.inputEmail}
+              style={isIOS ? styles.iosInputEmail : styles.androidInputEmail}
               placeholder="Email"
               value={form.email}
+              placeholderTextColor={'black'}
               autoCapitalize="none"
               keyboardType="email-address"
               onChangeText={text => handleInputFieldChange('email', text)}
@@ -140,9 +142,10 @@ export const AuthScreen = () => {
             <Ionicons style={{paddingHorizontal: 5}} name="lock-closed" size={30} color="#121329" />
             {/* Password */}
             <TextInput
-              style={styles.input}
+              style={isIOS ? styles.iosInput : styles.androidInput}
               placeholder="Password"
               value={form.password}
+              placeholderTextColor={'black'}
               secureTextEntry={!passwordVisible}
               autoCapitalize="none"
               onChangeText={text => handleInputFieldChange('password', text)}
@@ -162,7 +165,7 @@ export const AuthScreen = () => {
               <Ionicons style={{paddingHorizontal: 5}} name="person" size={30} color="#121329" />
               {/* Display Name */}
               <TextInput
-                style={styles.inputEmail}
+                style={styles.androidInputEmail}
                 placeholder="Display Name"
                 value={form.displayName}
                 autoCapitalize="none"
@@ -179,7 +182,7 @@ export const AuthScreen = () => {
               />
               {/* Email */}
               <TextInput
-                style={styles.inputEmail}
+                style={styles.androidInputEmail}
                 placeholder="Email"
                 value={form.email}
                 autoCapitalize="none"
@@ -197,7 +200,7 @@ export const AuthScreen = () => {
               />
               {/* Confirm Email  */}
               <TextInput
-                style={styles.inputEmail}
+                style={styles.androidInputEmail}
                 placeholder="Confirm Email"
                 value={form.confirmEmail}
                 autoCapitalize="none"
@@ -215,7 +218,7 @@ export const AuthScreen = () => {
               />
               {/* Password */}
               <TextInput
-                style={styles.input}
+                style={styles.androidInput}
                 placeholder="Password"
                 value={form.password}
                 secureTextEntry={!passwordVisible}
@@ -238,7 +241,7 @@ export const AuthScreen = () => {
               />
               {/*Confirm Password */}
               <TextInput
-                style={styles.input}
+                style={styles.androidInput}
                 placeholder="Confirm Password"
                 value={form.confirmPassword}
                 secureTextEntry={!passwordVisible}
@@ -311,7 +314,7 @@ const styles = StyleSheet.create({
     color: '#f4f4f4',
   },
 
-  inputEmail: {
+  androidInputEmail: {
     flex: 1,
     borderWidth: 1,
     borderColor: '#ccc',
@@ -321,12 +324,33 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 5,
     borderBottomRightRadius: 5,
   },
-
-  input: {
+  iosInputEmail: {
     flex: 1,
     borderWidth: 1,
     borderColor: '#ccc',
     paddingHorizontal: 10,
+    paddingVertical: 15,
+    backgroundColor: '#f4f4f4',
+    color: 'black',
+    borderTopRightRadius: 5,
+    borderBottomRightRadius: 5,
+  },
+
+  androidInput: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    paddingHorizontal: 10,
+    backgroundColor: '#f4f4f4',
+    color: 'black',
+  },
+
+  iosInput: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    paddingHorizontal: 10,
+    paddingVertical: 15,
     backgroundColor: '#f4f4f4',
     color: 'black',
   },
