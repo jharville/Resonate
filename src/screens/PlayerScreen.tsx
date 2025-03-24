@@ -8,7 +8,7 @@ import {UploadSong} from '../components/UploadSong.tsx';
 import {SongUploadProgress} from '../components/SongUploadProgress.tsx';
 import {CollectionStackScreenProps} from '../navigation/types/navigation.types.ts';
 
-// This is the "Player Screen" this will only render the player at the bottom
+// This is the "Player Screen". This will only render the player at the bottom
 // and songs listed from Firebase per User.
 // No folder funcitonality
 

@@ -2,19 +2,11 @@ import React, {useEffect, useState} from 'react';
 import {StyleSheet, View, ScrollView, ActivityIndicator, Text} from 'react-native';
 import {CollectionStackScreenProps} from '../navigation/types/navigation.types';
 import {Folder} from '../components/Folder';
-import firestore from '@react-native-firebase/firestore';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../store';
 import {UploadFolderModal} from '../components/UploadFolderModal';
 import {loadingStatuses, useLoadingStatus} from '../useLoadingStatuses';
-import {
-  collection,
-  doc,
-  getFirestore,
-  onSnapshot,
-  query,
-  orderBy,
-} from '@react-native-firebase/firestore';
+import {collection, onSnapshot, query, orderBy} from '@react-native-firebase/firestore';
 import {db} from '../../firebaseConfig';
 // This is the "Collection Screen". All unique Folders will be listed in this stack.
 
@@ -57,27 +49,6 @@ export const CollectionScreen = ({navigation}: CollectionStackScreenProps<'Colle
     return () => unsubscribe();
   }, [user]);
 
-  // Real-time listener for folder changes
-  // useEffect(() => {
-  //   if (!user) return;
-  //   const unsubscribe = firestore()
-  //     .collection('users')
-  //     .doc(user.uid)
-  //     .collection('folders')
-  //     .orderBy('createdAt', 'desc')
-  //     .onSnapshot(snapshot => {
-  //       const folderList = snapshot.docs.map(doc => ({
-  //         id: doc.id,
-  //         name: doc.data().name || 'Untitled',
-  //         artistName: doc.data().artistName || 'untitled',
-  //       }));
-
-  //       setFolders(folderList);
-  //     });
-
-  //   return () => unsubscribe();
-  // }, [user]);
-
   return (
     <View style={styles.wholePage}>
       {status === loadingStatuses.LOADING ? (
@@ -115,6 +86,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 20,
   },
+
   noFoldersContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -130,7 +102,8 @@ const styles = StyleSheet.create({
   folderContainer: {
     paddingVertical: 20,
   },
+
   scrollContent: {
-    paddingBottom: 20,
+    paddingBottom: 90,
   },
 });
