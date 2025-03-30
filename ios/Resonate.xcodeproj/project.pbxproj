@@ -8,24 +8,26 @@
 
 /* Begin PBXBuildFile section */
 		1318E5ED2D8C9918001E9018 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1318E5EC2D8C9918001E9018 /* GoogleService-Info.plist */; };
+		138324732D9713F2001701FE /* Orbitron.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 138324722D9713F2001701FE /* Orbitron.ttf */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		761780ED2CA45674006654EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761780EC2CA45674006654EE /* AppDelegate.swift */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		936167020A4E67E2CBA12CC3 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
-		E1BE24588EDB4ED7C08B66AB /* Pods_Resonate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC2C783538072394CF551FEB /* Pods_Resonate.framework */; };
+		DFC5A46A72C0BABFE5EF8335 /* Pods_Resonate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB1B7A94CABB3027BC6F612D /* Pods_Resonate.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		1318E5EC2D8C9918001E9018 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		138324722D9713F2001701FE /* Orbitron.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Orbitron.ttf; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* Resonate.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Resonate.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Resonate/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Resonate/Info.plist; sourceTree = "<group>"; };
 		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = Resonate/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		2070C78B4D2B487579E8273E /* Pods-Resonate.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Resonate.release.xcconfig"; path = "Target Support Files/Pods-Resonate/Pods-Resonate.release.xcconfig"; sourceTree = "<group>"; };
-		5322B815CC03AA1B083DE7CB /* Pods-Resonate.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Resonate.debug.xcconfig"; path = "Target Support Files/Pods-Resonate/Pods-Resonate.debug.xcconfig"; sourceTree = "<group>"; };
+		2D589223BB10C6AA92656EB7 /* Pods-Resonate.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Resonate.debug.xcconfig"; path = "Target Support Files/Pods-Resonate/Pods-Resonate.debug.xcconfig"; sourceTree = "<group>"; };
+		5FD62B8A6FC063F30C62A227 /* Pods-Resonate.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Resonate.release.xcconfig"; path = "Target Support Files/Pods-Resonate/Pods-Resonate.release.xcconfig"; sourceTree = "<group>"; };
 		761780EC2CA45674006654EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = Resonate/AppDelegate.swift; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = Resonate/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		CC2C783538072394CF551FEB /* Pods_Resonate.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Resonate.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EB1B7A94CABB3027BC6F612D /* Pods_Resonate.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Resonate.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -34,7 +36,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E1BE24588EDB4ED7C08B66AB /* Pods_Resonate.framework in Frameworks */,
+				DFC5A46A72C0BABFE5EF8335 /* Pods_Resonate.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -46,6 +48,7 @@
 			children = (
 				1318E5EC2D8C9918001E9018 /* GoogleService-Info.plist */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
+				138324722D9713F2001701FE /* Orbitron.ttf */,
 				761780EC2CA45674006654EE /* AppDelegate.swift */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
@@ -58,7 +61,7 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				CC2C783538072394CF551FEB /* Pods_Resonate.framework */,
+				EB1B7A94CABB3027BC6F612D /* Pods_Resonate.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -95,8 +98,8 @@
 		BBD78D7AC51CEA395F1C20DB /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				5322B815CC03AA1B083DE7CB /* Pods-Resonate.debug.xcconfig */,
-				2070C78B4D2B487579E8273E /* Pods-Resonate.release.xcconfig */,
+				2D589223BB10C6AA92656EB7 /* Pods-Resonate.debug.xcconfig */,
+				5FD62B8A6FC063F30C62A227 /* Pods-Resonate.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -108,14 +111,14 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Resonate" */;
 			buildPhases = (
-				CED48C01B92E433F35C2D9C4 /* [CP] Check Pods Manifest.lock */,
+				5A22824FF7AE51E74ADB6BC6 /* [CP] Check Pods Manifest.lock */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				0DA76456C2C84003D9636145 /* [CP] Embed Pods Frameworks */,
-				30651397561FC395D76377D7 /* [CP] Copy Pods Resources */,
-				F034BE562A238C5C9F044F87 /* [CP-User] [RNFB] Core Configuration */,
+				CF3821E0B49C75250779C352 /* [CP] Embed Pods Frameworks */,
+				0712AB0B9FB44E2496E72BEC /* [CP] Copy Pods Resources */,
+				FBD6357B8A07D06E63F54219 /* [CP-User] [RNFB] Core Configuration */,
 			);
 			buildRules = (
 			);
@@ -166,6 +169,7 @@
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				1318E5ED2D8C9918001E9018 /* GoogleService-Info.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				138324732D9713F2001701FE /* Orbitron.ttf in Resources */,
 				936167020A4E67E2CBA12CC3 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -190,24 +194,7 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\nWITH_ENVIRONMENT=\"$REACT_NATIVE_PATH/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"$REACT_NATIVE_PATH/scripts/react-native-xcode.sh\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\"\n";
 		};
-		0DA76456C2C84003D9636145 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Resonate/Pods-Resonate-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Resonate/Pods-Resonate-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Resonate/Pods-Resonate-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		30651397561FC395D76377D7 /* [CP] Copy Pods Resources */ = {
+		0712AB0B9FB44E2496E72BEC /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -224,7 +211,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Resonate/Pods-Resonate-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		CED48C01B92E433F35C2D9C4 /* [CP] Check Pods Manifest.lock */ = {
+		5A22824FF7AE51E74ADB6BC6 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -246,7 +233,24 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		F034BE562A238C5C9F044F87 /* [CP-User] [RNFB] Core Configuration */ = {
+		CF3821E0B49C75250779C352 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Resonate/Pods-Resonate-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Resonate/Pods-Resonate-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Resonate/Pods-Resonate-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		FBD6357B8A07D06E63F54219 /* [CP-User] [RNFB] Core Configuration */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -275,7 +279,7 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5322B815CC03AA1B083DE7CB /* Pods-Resonate.debug.xcconfig */;
+			baseConfigurationReference = 2D589223BB10C6AA92656EB7 /* Pods-Resonate.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -304,7 +308,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2070C78B4D2B487579E8273E /* Pods-Resonate.release.xcconfig */;
+			baseConfigurationReference = 5FD62B8A6FC063F30C62A227 /* Pods-Resonate.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -410,10 +414,7 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
@@ -494,10 +495,7 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
