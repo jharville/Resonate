@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {PressableScaleButton} from './PressableScaleButton';
-import {State, usePlaybackState} from 'react-native-track-player';
+import TrackPlayer, {State, usePlaybackState} from 'react-native-track-player';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {useSelector} from 'react-redux';
 import {PlayerState} from '../redux/playerSlice';
@@ -18,13 +18,32 @@ export const SongList = ({songs, onSelectSong}: SongListProps) => {
     return <MaterialIcons name="play-circle-outline" size={40} color="#fff" />;
   };
 
+  // For handling Play/Pause states
+  const handleSongAction = (song: Song) => {
+    if (activeTrack?.id === song.id && playbackState.state === State.Playing) {
+      TrackPlayer.pause();
+    } else {
+      TrackPlayer.reset();
+      TrackPlayer.add(song);
+      TrackPlayer.play();
+    }
+  };
+
   return (
     <View>
       {songs.map(song => (
         <View style={styles.wholeContainer} key={song.id}>
           <View style={styles.iconAndSongContainer}>
             <View>
-              <PressableScaleButton scale={0.9}>{getActionButton(song)}</PressableScaleButton>
+              <PressableScaleButton
+                scale={0.9}
+                onPress={() => {
+                  onSelectSong(song); // Passes selected song to parent
+                  handleSongAction(song); // Plays the selected song
+                }}>
+                {getActionButton(song)}
+                {/* getActionButton detects the state of the player and returns the proper icon */}
+              </PressableScaleButton>
             </View>
             <TouchableOpacity
               style={styles.songContainer}
@@ -35,6 +54,7 @@ export const SongList = ({songs, onSelectSong}: SongListProps) => {
               </Text>
             </TouchableOpacity>
           </View>
+          {/* Song Options on the Right */}
           <Entypo name="dots-three-vertical" style={styles.settingsButtonStyle} />
         </View>
       ))}

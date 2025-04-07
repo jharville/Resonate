@@ -36,6 +36,4 @@ const styles = StyleSheet.create({
     gap: 10,
     alignItems: 'center',
   },
-
-  headerBackButton: {},
 });

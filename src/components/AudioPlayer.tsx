@@ -70,7 +70,6 @@ export const AudioPlayer = ({activeTrack}: AudioPlayerProps) => {
           <Text style={styles.trackTitle} numberOfLines={1} ellipsizeMode="tail">
             {trackToAdd.name}
           </Text>
-          <Text style={styles.trackFolderName}>Demo Stuff</Text>
         </View>
       </View>
 

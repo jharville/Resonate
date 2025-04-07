@@ -4,6 +4,7 @@ import {
   NativeStackNavigationOptions,
 } from '@react-navigation/native-stack';
 import {CollectionScreen} from '../../screens/CollectionScreen';
+import {SubFolderScreen} from '../../screens/SubFolderScreen';
 import {CollectionStackParamList} from '../types/navigation.types';
 import {RightSideHeader} from '../HeaderComponents/RightSideHeader';
 import {LeftSideHeader} from '../HeaderComponents/LeftSideHeader';
@@ -12,8 +13,11 @@ import {StyleSheet, View} from 'react-native';
 import {useSelector} from 'react-redux';
 import {AudioPlayer} from '../../components/AudioPlayer';
 import {PlayerState} from '../../redux/playerSlice';
-import {RootState} from '../../../store';
 import {ProfileModal} from '../../components/modals/ProfileModal';
+import {ParentFolderOptionsModal} from '../../components/modals/ParentFolderOptionsModal.tsx';
+import {RenameParentFolderModal} from '../../components/modals/RenameParentFolderModal.tsx';
+import {RenameSubFolderModal} from '../../components/modals/RenameSubFolderModal.tsx';
+import {SubFolderOptionsModal} from '../../components/modals/SubFolderOptionsModal.tsx';
 
 const Stack = createNativeStackNavigator<CollectionStackParamList>();
 
@@ -22,8 +26,22 @@ const CollectionScreenOptions: NativeStackNavigationOptions = {
   headerLeft: LeftSideHeader,
   headerRight: RightSideHeader,
   headerTitle: '',
+  headerBackVisible: false,
+  headerShadowVisible: false,
+  headerStyle: {
+    backgroundColor: '#151314',
+  },
+
+  headerTintColor: 'white',
+  headerTitleAlign: 'center',
+};
+
+const SubFolderScreenOptions: NativeStackNavigationOptions = {
+  headerShown: true,
+  headerLeft: LeftSideHeader,
+  headerRight: RightSideHeader,
+  headerTitle: '',
   headerTitleStyle: {
-    fontFamily: '',
     fontSize: 35,
     fontWeight: '500',
     color: 'white',
@@ -31,7 +49,7 @@ const CollectionScreenOptions: NativeStackNavigationOptions = {
   headerBackVisible: false,
   headerShadowVisible: false,
   headerStyle: {
-    backgroundColor: '#26272b',
+    backgroundColor: '#151314',
   },
   headerTintColor: 'white',
   headerTitleAlign: 'center',
@@ -43,7 +61,6 @@ const PlayerScreenOptions: NativeStackNavigationOptions = {
   headerRight: RightSideHeader,
   headerTitle: '',
   headerTitleStyle: {
-    fontFamily: '',
     fontSize: 35,
     fontWeight: '500',
     color: 'white',
@@ -51,7 +68,7 @@ const PlayerScreenOptions: NativeStackNavigationOptions = {
   headerBackVisible: false,
   headerShadowVisible: false,
   headerStyle: {
-    backgroundColor: '#26272b',
+    backgroundColor: '#151314',
   },
   headerTintColor: 'white',
   headerTitleAlign: 'center',
@@ -61,22 +78,22 @@ export const CollectionStack = () => {
   const activeTrack = useSelector(
     (state: {player: PlayerState}) => state.player.activeTrack || null,
   );
-  const isModalVisible = useSelector(
-    (state: RootState) => state.profileModal.isProfileModalVisible,
-  );
 
   return (
-    <View style={styles.container}>
+    <View style={styles.wholeContainer}>
       <Stack.Navigator screenOptions={CollectionScreenOptions}>
         <Stack.Screen
           name="CollectionScreen"
           component={CollectionScreen}
           options={CollectionScreenOptions}
         />
+        <Stack.Screen
+          name="SubFolderScreen"
+          component={SubFolderScreen}
+          options={SubFolderScreenOptions}
+        />
         <Stack.Screen name="PlayerScreen" component={PlayerScreen} options={PlayerScreenOptions} />
       </Stack.Navigator>
-
-      <ProfileModal />
 
       {/* For Conditionally rendering the music player at the bottom of the screen */}
       {activeTrack && (
@@ -84,12 +101,22 @@ export const CollectionStack = () => {
           <AudioPlayer activeTrack={activeTrack} />
         </View>
       )}
+
+      <ProfileModal />
+
+      <ParentFolderOptionsModal />
+
+      <SubFolderOptionsModal />
+
+      <RenameParentFolderModal />
+
+      <RenameSubFolderModal />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  wholeContainer: {
     flex: 1,
   },
   footer: {

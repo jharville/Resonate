@@ -1,9 +1,8 @@
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useNavigation, useRoute} from '@react-navigation/native';
-import {HeaderBackButtonProps} from '@react-navigation/native-stack/lib/typescript/src/types';
 
-export const HeaderBackButton = (props: HeaderBackButtonProps) => {
+export const HeaderBackButton = () => {
   const navigation = useNavigation();
   const route = useRoute();
 
@@ -16,11 +15,9 @@ export const HeaderBackButton = (props: HeaderBackButtonProps) => {
 
   return (
     <View style={styles.wholeContainer}>
-      <View style={styles.headerBackButton}>
-        <TouchableOpacity onPress={handlePress} hitSlop={{top: 8, bottom: 8, left: 15, right: 0}}>
-          <Ionicons name="chevron-back" size={35} color="#fff" />
-        </TouchableOpacity>
-      </View>
+      <TouchableOpacity onPress={handlePress} hitSlop={{top: 8, bottom: 8, left: 15, right: 0}}>
+        <Ionicons name="chevron-back" size={35} color="#fff" style={styles.backButtonStyle} />
+      </TouchableOpacity>
     </View>
   );
 };
@@ -32,5 +29,9 @@ const styles = StyleSheet.create({
     gap: 20,
     alignItems: 'center',
   },
-  headerBackButton: {},
+  backButtonStyle: {
+    color: 'white',
+    marginLeft: -10,
+    marginRight: 0,
+  },
 });

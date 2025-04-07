@@ -2,37 +2,52 @@ import React, {useEffect, useState} from 'react';
 import {StyleSheet, View, ScrollView, ActivityIndicator, Text} from 'react-native';
 import {CollectionStackScreenProps} from '../navigation/types/navigation.types';
 import {Folder} from '../components/Folder';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../store';
-import {UploadFolderModal} from '../components/UploadFolderModal';
+import {UploadFolderModal} from '../components/modals/UploadFolderModal.tsx';
 import {loadingStatuses, useLoadingStatus} from '../useLoadingStatuses';
 import {collection, onSnapshot, query, orderBy} from '@react-native-firebase/firestore';
 import {db} from '../../firebaseConfig';
+import {toggleParentFolderOptionsModal} from '../redux/parentFolderOptionsModalSlice.ts';
+import {
+  setParentFolderID,
+  setArtistName,
+  setParentFolderName,
+} from '../redux/renameParentFolderSlice.ts';
+
 // This is the "Collection Screen". All unique Folders will be listed in this stack.
 
 export const CollectionScreen = ({navigation}: CollectionStackScreenProps<'CollectionScreen'>) => {
-  const {status, startLoading, setDoneLoading} = useLoadingStatus();
-  const [folders, setFolders] = useState<
+  const {status} = useLoadingStatus();
+  const [parentFolders, setParentFolders] = useState<
     {
       artistName: string;
       id: string;
       name: string;
+      imageURL: string | null;
     }[]
   >([]);
+  const dispatch = useDispatch();
 
   const user = useSelector((state: RootState) => state.auth.user);
 
-  const handleFolderClick = (folder: {id: string; name: string; artistName: string}) => {
-    navigation.navigate('PlayerScreen', {
+  const handleFolderPress = (folder: {id: string; name: string; artistName: string}) => {
+    navigation.navigate('SubFolderScreen', {
       folderId: folder.id,
       name: folder.name,
       artistName: folder.artistName,
     });
   };
 
+  const handleThreeDotPress = (folder: {id: string; name: string; artistName: string}) => {
+    dispatch(setParentFolderID(folder.id));
+    dispatch(setParentFolderName(folder.name));
+    dispatch(setArtistName(folder.artistName));
+    dispatch(toggleParentFolderOptionsModal());
+  };
+
   useEffect(() => {
     if (!user) return;
-
     const foldersRef = collection(db, 'users', user.uid, 'folders');
     const q = query(foldersRef, orderBy('createdAt', 'desc'));
 
@@ -41,9 +56,10 @@ export const CollectionScreen = ({navigation}: CollectionStackScreenProps<'Colle
         id: doc.id,
         name: doc.data().name || 'Untitled',
         artistName: doc.data().artistName || 'untitled',
+        imageURL: doc.data().imageURL || null,
       }));
 
-      setFolders(folderList);
+      setParentFolders(folderList);
     });
 
     return () => unsubscribe();
@@ -53,7 +69,7 @@ export const CollectionScreen = ({navigation}: CollectionStackScreenProps<'Colle
     <View style={styles.wholePage}>
       {status === loadingStatuses.LOADING ? (
         <ActivityIndicator size="large" color="#0078D7" />
-      ) : folders.length === 0 ? (
+      ) : parentFolders.length === 0 ? (
         <View style={styles.noFoldersContainer}>
           <Text style={styles.addAFolderText}>Add a folder!</Text>
         </View>
@@ -62,12 +78,14 @@ export const CollectionScreen = ({navigation}: CollectionStackScreenProps<'Colle
           showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}>
-          {folders.map(folder => (
+          {parentFolders.map(folder => (
             <View key={folder.id} style={styles.folderContainer}>
               <Folder
                 folderName={folder.name}
                 artistName={folder.artistName}
-                onPress={() => handleFolderClick(folder)}
+                imageURL={folder.imageURL}
+                onPress={() => handleFolderPress(folder)}
+                onThreeDotPress={() => handleThreeDotPress(folder)}
               />
             </View>
           ))}

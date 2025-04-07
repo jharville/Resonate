@@ -13,19 +13,26 @@ import {
 } from 'react-native';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Feather from 'react-native-vector-icons/Feather';
-import {auth, db} from '../../firebaseConfig';
+import {auth, db} from '../../../firebaseConfig';
 import {collection, doc, serverTimestamp, setDoc} from '@react-native-firebase/firestore';
-import {ToggleButton} from './ToggleButton';
+import {ToggleButton} from '../ToggleButton';
+import {useDispatch, useSelector} from 'react-redux';
+import {RootState} from '../../../store.tsx';
+import {setArtistName, setParentFolderName} from '../../redux/renameParentFolderSlice.ts';
 
 export const UploadFolderModal = () => {
   const [modalVisible, setModalVisible] = useState(false);
-  const [folderName, setFolderName] = useState('');
-  const [artistName, setArtistName] = useState('');
+
+  const dispatch = useDispatch();
+  const folderName = useSelector((state: RootState) => state.renameParentFolder.folderName);
+  const artistName = useSelector((state: RootState) => state.renameParentFolder.artistName);
 
   const screenWidth = Dimensions.get('window').width;
   const slideAnim = useRef(new Animated.Value(screenWidth)).current;
 
   const openModal = () => {
+    dispatch(setParentFolderName(''));
+    dispatch(setArtistName(''));
     setModalVisible(true);
     Animated.timing(slideAnim, {
       toValue: 0, // Moves left
@@ -51,8 +58,8 @@ export const UploadFolderModal = () => {
       return;
     }
 
-    if (!folderName.trim() || !artistName.trim()) {
-      Alert.alert('Error', 'Please enter both a Folder Name and an Artist Name.');
+    if (!artistName.trim()) {
+      Alert.alert('Error', 'Please enter an Artist Name.');
       return;
     }
 
@@ -62,11 +69,9 @@ export const UploadFolderModal = () => {
         artistName: artistName.trim(),
         createdAt: serverTimestamp(),
       };
-      // await firestore().collection('users').doc(user.uid).collection('folders').add(newFolder);
       await setDoc(doc(collection(db, 'users', user.uid, 'folders')), newFolder);
-
-      setFolderName('');
-      setArtistName('');
+      dispatch(setParentFolderName(''));
+      dispatch(setArtistName(''));
       closeModal();
     } catch (error) {
       console.error('Error creating folder:', error);
@@ -95,17 +100,10 @@ export const UploadFolderModal = () => {
               <View style={styles.inputFieldsContainer}>
                 <TextInput
                   style={styles.input}
-                  placeholder="Folder Name"
-                  placeholderTextColor="#FFFFFF"
-                  value={folderName}
-                  onChangeText={setFolderName}
-                />
-                <TextInput
-                  style={styles.input}
-                  placeholder="Artist Name"
+                  placeholder="Artist Name (e.g. Metallica)"
                   placeholderTextColor="#FFFFFF"
                   value={artistName}
-                  onChangeText={setArtistName}
+                  onChangeText={text => dispatch(setArtistName(text))}
                 />
               </View>
 
@@ -215,7 +213,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   inputFieldsContainer: {
-    gap: 20,
+    paddingBottom: 20,
   },
 
   modalTitleContainer: {
@@ -230,10 +228,12 @@ const styles = StyleSheet.create({
   },
 
   input: {
-    padding: 10,
+    paddingHorizontal: 10,
     color: '#feffff',
     borderBottomWidth: 1,
     borderColor: '#57595d',
+    fontSize: 20,
+    fontWeight: '600',
   },
 
   permissionsContainer: {

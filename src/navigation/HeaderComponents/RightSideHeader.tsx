@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
   wholeContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    gap: 15,
+    gap: 20,
     alignItems: 'center',
   },
   settingsButtonStyle: {color: 'white', fontSize: 38},
