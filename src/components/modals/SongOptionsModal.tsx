@@ -1,26 +1,35 @@
 import React, {useRef, useEffect, useState} from 'react';
-import {Text, TouchableOpacity, Animated, StyleSheet, Dimensions, View, Modal} from 'react-native';
+import {
+  Text,
+  TouchableOpacity,
+  Animated,
+  StyleSheet,
+  Dimensions,
+  View,
+  Modal,
+  Alert,
+} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../../store';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {auth, db} from '../../../firebaseConfig.tsx';
-import {deleteDoc, doc} from '@react-native-firebase/firestore';
-import {pickImage} from '../../imagePicker.ts';
-import {openRenameSubFolderModal} from '../../redux/renameSubFolderSlice.ts';
-import {closesubFolderOptionsModal} from '../../redux/subFolderOptionsModalSlice.ts';
+import {auth} from '../../../firebaseConfig.tsx';
+import {closeSongOptionsModal} from '../../redux/songOptionsModalSlice.ts';
+import storage from '@react-native-firebase/storage';
+import firestore from '@react-native-firebase/firestore';
+import {clearSelectedSong} from '../../redux/selectedSongSlice.ts';
+import {openRenameSongModal} from '../../redux/renameSongSlice.ts';
 
-// This is the SUBFOLDER Options Modal.
-// It allows the user to rename, move, or delete a SUBFOLDER.
+// This is the SONG Options Modal.
+// It allows the user to rename, move, or delete a Song
 
-export const SubFolderOptionsModal = () => {
+export const SongOptionsModal = () => {
   const [isTrashModalVisible, setTrashModalVisible] = useState(false);
 
   const dispatch = useDispatch();
   const isVisible = useSelector(
-    (state: RootState) => state.subFolderOptionsModal.issubFolderOptionsModalVisible,
+    (state: RootState) => state.songOptionsModal.isSongOptionsModalVisible,
   );
 
   const slideAnim = useRef(new Animated.Value(Dimensions.get('window').width)).current;
@@ -42,41 +51,41 @@ export const SubFolderOptionsModal = () => {
   }, [isVisible]);
 
   const handleRenamePress = () => {
-    dispatch(openRenameSubFolderModal());
-    dispatch(closesubFolderOptionsModal());
+    dispatch(openRenameSongModal());
+    dispatch(closeSongOptionsModal());
   };
 
   const handleTrashPress = () => {
     setTrashModalVisible(true);
   };
 
-  const parentFolderId = useSelector((state: RootState) => state.renameParentFolder.folderID);
-  const subFolderId = useSelector((state: RootState) => state.renameSubFolder.subFolderID);
-
+  const selectedSong = useSelector((state: RootState) => state.selectedSong);
+  const user = auth.currentUser;
   const handleYesDeletePress = async () => {
     try {
-      const user = auth.currentUser;
-      if (!user || !subFolderId) return;
-      const folderRef = doc(
-        db,
-        'users',
-        user.uid,
-        'folders',
-        parentFolderId,
-        'subfolders',
-        subFolderId,
-      );
-      await deleteDoc(folderRef);
-      setTrashModalVisible(false);
-      dispatch(closesubFolderOptionsModal());
-    } catch (error) {
-      console.error('Failed to delete folder:', error);
-    }
-  };
+      if (!user || !selectedSong) throw new Error('Missing user or song');
 
-  const handleImagePress = () => {
-    pickImage(parentFolderId, subFolderId);
-    dispatch(closesubFolderOptionsModal());
+      // 1. Delete file from Firebase Storage
+      await storage().ref(selectedSong.storagePath).delete();
+
+      // 2. Delete Firestore document
+      await firestore()
+        .collection('users')
+        .doc(user.uid)
+        .collection('folders')
+        .doc(selectedSong.folderId)
+        .collection('songs')
+        .doc(selectedSong.id)
+
+        .delete();
+
+      dispatch(clearSelectedSong());
+      setTrashModalVisible(false);
+      dispatch(closeSongOptionsModal());
+    } catch (error) {
+      console.error('Failed to delete song:', error);
+      Alert.alert('Delete Failed', 'Could not delete the song.');
+    }
   };
 
   return (
@@ -84,7 +93,7 @@ export const SubFolderOptionsModal = () => {
       {isVisible && (
         <TouchableOpacity
           activeOpacity={1}
-          onPress={() => dispatch(closesubFolderOptionsModal())}
+          onPress={() => dispatch(closeSongOptionsModal())}
           style={styles.backdrop}
         />
       )}
@@ -98,16 +107,10 @@ export const SubFolderOptionsModal = () => {
             <Text style={styles.menuText}>Rename</Text>
           </TouchableOpacity>
 
-          {/* ArtWork */}
-          <TouchableOpacity style={styles.menuItem} onPress={handleImagePress}>
-            <FontAwesome name="picture-o" size={21} color="#fff" />
-            <Text style={styles.menuText}>Artwork</Text>
-          </TouchableOpacity>
-
           {/* Move File */}
           <TouchableOpacity
             style={styles.menuItem}
-            onPress={() => dispatch(closesubFolderOptionsModal())}>
+            onPress={() => dispatch(closeSongOptionsModal())}>
             <View style={styles.fileMoveContainerStyle}>
               <MaterialCommunityIcons name="file-move-outline" size={28} color="#fff" />
             </View>
@@ -158,7 +161,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    height: '35%',
+    height: '28%',
     backgroundColor: '#2e3133',
     paddingHorizontal: 40,
     justifyContent: 'center',

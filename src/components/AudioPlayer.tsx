@@ -1,49 +1,57 @@
 import React, {useCallback} from 'react';
 import {View, StyleSheet, Text} from 'react-native';
-import TrackPlayer, {State, usePlaybackState} from 'react-native-track-player';
-import {useDispatch} from 'react-redux';
-import {setActiveTrack} from '../redux/playerSlice';
+import TrackPlayer, {AddTrack, State, usePlaybackState} from 'react-native-track-player';
+import {useDispatch, useSelector} from 'react-redux';
 import {PressableScaleButton} from './PressableScaleButton';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome6';
 import {isIOS} from '../constants.ts';
+import {DotIndicator} from 'react-native-indicators';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import {toggleAudioPlayerModal} from '../redux/audioPlayerModalSlice.ts';
+import {PlayerState} from '../redux/playerSlice.tsx';
 
 //TrackPlayer States
 /*
+Undefined: "undefined",
 None: "none",
-Ready: "ready",
-Playing: "playing",
-Paused: "paused",
-Stopped: "stopped", a.k.a Reset
-Buffering: "buffering",
-Connecting: "connecting"
+Ready: "Track is ready to play",
+Playing: "Track is playing",
+Paused: "Track is paused",
+Stopped: "Track has been stopped a.k.a Reset"
+Buffering: "Track is buffering",
 */
 
-export const AudioPlayer = ({activeTrack}: AudioPlayerProps) => {
-  const dispatch = useDispatch(); // Redux dispatch function
-  const playbackState = usePlaybackState(); // Automatically tracks playback state
+export const AudioPlayer = () => {
+  const dispatch = useDispatch();
+  const playbackState = usePlaybackState();
 
-  const trackToAdd = {
+  const activeTrack = useSelector(
+    (state: {player: {activeTrack: AddTrack}}) => state.player.activeTrack,
+  );
+  const subFolderName = useSelector((state: {player: PlayerState}) => state.player.subFolderName);
+
+  const userHighlightedTrack = {
     id: activeTrack?.id,
     url: activeTrack?.url,
     name: activeTrack?.name,
   };
 
+  // Play Song
   const playSong = useCallback(async () => {
     try {
-      await TrackPlayer.reset(); // Clears queue to avoid conflicts
-      await TrackPlayer.add([trackToAdd]); // Adds the track
-      dispatch(setActiveTrack(trackToAdd));
       await TrackPlayer.play();
     } catch (error) {
       console.error('🚨 Error in playSong:', error);
     }
-  }, [dispatch, activeTrack]);
+  }, [dispatch]);
 
+  // Pause Song
   const pauseSong = useCallback(async () => {
     await TrackPlayer.pause();
   }, [dispatch]);
 
+  //Handle Song Action
   const handleSongAction = useCallback(async () => {
     if (playbackState.state === State.Playing) {
       await pauseSong();
@@ -52,12 +60,33 @@ export const AudioPlayer = ({activeTrack}: AudioPlayerProps) => {
     }
   }, [playbackState, playSong, pauseSong]);
 
-  //For gettting the appropriate icon based on TrackPlayer state
+  //For getting the appropriate icon based on TrackPlayer state
   const getActionButton = () => {
     if (playbackState.state === State.Playing) {
       return <MaterialIcons name="pause-circle-outline" size={50} color="#fff" />;
-    } else playbackState.state === State.Paused;
-    return <MaterialIcons name="play-circle-outline" size={50} color="#fff" />;
+    } else if (playbackState.state === State.Paused) {
+      return <MaterialIcons name="play-circle-outline" size={50} color="#fff" />;
+    } else if (playbackState.state === State.Buffering)
+      return <DotIndicator color="white" size={7} count={3} />;
+    else if (playbackState.state === State.Loading) {
+      return <DotIndicator color="white" size={7} count={3} />;
+    } else if (playbackState.state === State.None) {
+      return <MaterialIcons name="play-circle-outline" size={50} color="#fff" />;
+    } else if (playbackState.state === State.Stopped) {
+      return <MaterialIcons name="play-circle-outline" size={50} color="#fff" />;
+    } else if (playbackState.state === State.Ready) {
+      return <MaterialIcons name="play-circle-outline" size={50} color="#fff" />;
+    } else if (playbackState.state === State.Ended) {
+      return <MaterialIcons name="play-circle-outline" size={50} color="#fff" />;
+    } else if (playbackState.state === State.Error) {
+      return <Text>ERROR</Text>;
+    } else if (playbackState.state === undefined) {
+      return null;
+    }
+  };
+
+  const handleAudioPlayerModalPress = () => {
+    dispatch(toggleAudioPlayerModal());
   };
 
   return (
@@ -68,14 +97,23 @@ export const AudioPlayer = ({activeTrack}: AudioPlayerProps) => {
         </View>
         <View style={styles.infoContainer}>
           <Text style={styles.trackTitle} numberOfLines={1} ellipsizeMode="tail">
-            {trackToAdd.name}
+            {userHighlightedTrack.name}
+          </Text>
+          <Text style={styles.trackSubFolder} numberOfLines={1} ellipsizeMode="tail">
+            {subFolderName}
           </Text>
         </View>
       </View>
 
       <View style={styles.rightSideButtons}>
-        <PressableScaleButton scale={0.9} onPress={handleSongAction}>
+        <PressableScaleButton
+          style={styles.actionButtonStyle}
+          scale={0.9}
+          onPress={handleSongAction}>
           {getActionButton()}
+        </PressableScaleButton>
+        <PressableScaleButton scale={0.9} onPress={handleAudioPlayerModalPress}>
+          <AntDesign name="up" size={40} color="#fff" />
         </PressableScaleButton>
       </View>
     </View>
@@ -121,17 +159,27 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     flexDirection: 'row',
     justifyContent: 'flex-end',
+    alignItems: 'center',
+    gap: 10,
   },
 
-  trackFolderName: {
-    color: 'white',
-    fontSize: 13,
+  actionButtonStyle: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 50,
+    width: 50,
   },
 
   trackTitle: {
     color: 'white',
     fontSize: 15,
     fontWeight: 700,
+  },
+
+  trackSubFolder: {
+    color: 'white',
+    fontSize: 15,
+    fontWeight: 400,
   },
 
   recordContainer: {
@@ -141,18 +189,3 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
 });
-
-// const restartSong = useCallback(async () => {
-//   await TrackPlayer.seekTo(0); // Moves playback to the start of the track
-//   await TrackPlayer.play();
-// }, []);
-
-type activeTrack = {
-  id: string;
-  url: string;
-  name: string;
-};
-
-type AudioPlayerProps = {
-  activeTrack: activeTrack;
-};

@@ -36,6 +36,7 @@ export const UploadSubFolderModal = ({
   const slideAnim = useRef(new Animated.Value(screenWidth)).current;
 
   const openModal = () => {
+    console.log('PRESSED');
     dispatch(setSubFolderName(''));
     setModalVisible(true);
     Animated.timing(slideAnim, {

@@ -5,7 +5,6 @@ export const renameSubFolderSlice = createSlice({
   initialState: {
     subFolderID: '',
     subFolderName: '',
-    // artistName: '',
     isRenameSubFolderModalVisible: false,
   },
   reducers: {

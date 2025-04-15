@@ -18,6 +18,11 @@ import {ParentFolderOptionsModal} from '../../components/modals/ParentFolderOpti
 import {RenameParentFolderModal} from '../../components/modals/RenameParentFolderModal.tsx';
 import {RenameSubFolderModal} from '../../components/modals/RenameSubFolderModal.tsx';
 import {SubFolderOptionsModal} from '../../components/modals/SubFolderOptionsModal.tsx';
+import {SongOptionsModal} from '../../components/modals/SongOptionsModal.tsx';
+import {RenameSongModal} from '../../components/modals/RenameSongModal.tsx';
+import {AudioPlayerModal} from '../../components/modals/AudioPlayerModal.tsx';
+import {ReorderSongsModal} from '../../components/modals/ReorderSongsModal.tsx';
+import {RootState} from '../../../store.tsx';
 
 const Stack = createNativeStackNavigator<CollectionStackParamList>();
 
@@ -36,47 +41,13 @@ const CollectionScreenOptions: NativeStackNavigationOptions = {
   headerTitleAlign: 'center',
 };
 
-const SubFolderScreenOptions: NativeStackNavigationOptions = {
-  headerShown: true,
-  headerLeft: LeftSideHeader,
-  headerRight: RightSideHeader,
-  headerTitle: '',
-  headerTitleStyle: {
-    fontSize: 35,
-    fontWeight: '500',
-    color: 'white',
-  },
-  headerBackVisible: false,
-  headerShadowVisible: false,
-  headerStyle: {
-    backgroundColor: '#151314',
-  },
-  headerTintColor: 'white',
-  headerTitleAlign: 'center',
-};
-
-const PlayerScreenOptions: NativeStackNavigationOptions = {
-  headerShown: true,
-  headerLeft: LeftSideHeader,
-  headerRight: RightSideHeader,
-  headerTitle: '',
-  headerTitleStyle: {
-    fontSize: 35,
-    fontWeight: '500',
-    color: 'white',
-  },
-  headerBackVisible: false,
-  headerShadowVisible: false,
-  headerStyle: {
-    backgroundColor: '#151314',
-  },
-  headerTintColor: 'white',
-  headerTitleAlign: 'center',
-};
-
 export const CollectionStack = () => {
   const activeTrack = useSelector(
     (state: {player: PlayerState}) => state.player.activeTrack || null,
+  );
+
+  const isReorderSongsModalVisible = useSelector(
+    (state: RootState) => state.reorderSongsModal.isReorderSongsModalVisible,
   );
 
   return (
@@ -87,18 +58,14 @@ export const CollectionStack = () => {
           component={CollectionScreen}
           options={CollectionScreenOptions}
         />
-        <Stack.Screen
-          name="SubFolderScreen"
-          component={SubFolderScreen}
-          options={SubFolderScreenOptions}
-        />
-        <Stack.Screen name="PlayerScreen" component={PlayerScreen} options={PlayerScreenOptions} />
+        <Stack.Screen name="SubFolderScreen" component={SubFolderScreen} />
+        <Stack.Screen name="PlayerScreen" component={PlayerScreen} />
       </Stack.Navigator>
 
       {/* For Conditionally rendering the music player at the bottom of the screen */}
       {activeTrack && (
         <View style={styles.footer}>
-          <AudioPlayer activeTrack={activeTrack} />
+          <AudioPlayer />
         </View>
       )}
 
@@ -111,6 +78,15 @@ export const CollectionStack = () => {
       <RenameParentFolderModal />
 
       <RenameSubFolderModal />
+
+      <SongOptionsModal />
+
+      <RenameSongModal />
+
+      {isReorderSongsModalVisible && <ReorderSongsModal />}
+
+      {/* This is the EXPANDED AudioPlayerModal. Not the AudioPlayer */}
+      {activeTrack && <AudioPlayerModal />}
     </View>
   );
 };
@@ -123,7 +99,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 16,
     color: 'white',
-    paddingVertical: 10,
+    paddingBottom: 10,
     backgroundColor: '#151314',
   },
 });

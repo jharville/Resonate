@@ -76,7 +76,7 @@ export const UploadSong = ({folderId}: {folderId: string}) => {
         .add({
           name: fileName,
           url: downloadURL,
-          storagePath,
+          storagePath: `users/${userId}/folders/${folderId}/songs/${fileName}`, //Added this line
           createdAt: firestore.FieldValue.serverTimestamp(),
         });
 
@@ -121,6 +121,5 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 20,
     right: 20,
-    zIndex: 10,
   },
 });
