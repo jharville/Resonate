@@ -1,32 +1,27 @@
-import React, {useEffect, useState} from 'react';
-import {
-  StyleSheet,
-  View,
-  ScrollView,
-  Text,
-  ActivityIndicator,
-  TouchableOpacity,
-} from 'react-native';
-import {useFetchSongs} from '../useFetchSongs.tsx';
+import React, {useEffect} from 'react';
+import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
+import {useFetchSongs} from '../Hooks/useFetchSongs.tsx';
 import {SongList} from '../components/SongList.tsx';
 import {useDispatch, useSelector} from 'react-redux';
 import {UploadSong} from '../components/UploadSong.tsx';
 import {SongUploadProgress} from '../components/SongUploadProgress.tsx';
 import {CollectionStackScreenProps} from '../navigation/types/navigation.types.ts';
-import {loadingStatuses, useLoadingStatus} from '../useLoadingStatuses.tsx';
 import {toggleSongOptionsModal} from '../redux/songOptionsModalSlice.ts';
 import {setSelectedSong} from '../redux/selectedSongSlice.ts';
 import Entypo from 'react-native-vector-icons/Entypo';
-import {isIOS} from '../constants.ts';
+import {isIOS} from '../utilities/constants.ts';
 import {
   closePlayerScreenMainOptionsModal,
   openPlayerScreenMainOptionsModal,
 } from '../redux/playerScreenMainOptionsModalSlice.ts';
 import {PlayerScreenMainOptionsModal} from '../components/modals/PlayerScreenMainOptionsModal.tsx';
 import {setFullRouteInfo} from '../redux/routeParamsSlice.ts';
-import {openReorderSongsModal, setHasReorderedSongs} from '../redux/reorderSongsModalSlice.ts';
+import {openReorderSongsModal} from '../redux/reorderSongsModalSlice.ts';
 import {RootState} from '../../store.tsx';
 import {CustomAlert} from '../components/CustomAlert.tsx';
+import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
+import {useFormatTime} from '../Hooks/useFormatTime.ts';
+import TrackPlayer from 'react-native-track-player';
 
 // This is the "Player Screen". This will only render the player at the bottom
 // and songs listed from Firebase per User.
@@ -34,17 +29,18 @@ import {CustomAlert} from '../components/CustomAlert.tsx';
 
 export const PlayerScreen = ({route}: CollectionStackScreenProps<'PlayerScreen'>) => {
   const dispatch = useDispatch();
-  const {folderId, artistName, subFolderName} = route.params;
+  const {parentFolderName, parentFolderId, subFolderId, subFolderName} = route.params;
   const hasReorderedSongs = useSelector(
     (state: RootState) => state.reorderSongsModal.hasReorderedSongs,
   );
 
+  // Setting the route params here in Redux for use elsewhere
   useEffect(() => {
-    dispatch(setFullRouteInfo({folderId, artistName, subFolderName}));
-  }, [folderId, artistName, subFolderName, dispatch]);
+    dispatch(setFullRouteInfo({parentFolderId, parentFolderName, subFolderId, subFolderName}));
+  }, [parentFolderId, parentFolderName, subFolderId, subFolderName, dispatch]);
 
-  const songs = useFetchSongs(folderId);
-  const {status} = useLoadingStatus();
+  // Fetches the songs from firebase using the route params and we use that in SongList in the JSX
+  const songs = useFetchSongs({parentFolderId, subFolderId});
 
   const handleSongOptionsPress = (song: any) => {
     dispatch(toggleSongOptionsModal());
@@ -52,7 +48,7 @@ export const PlayerScreen = ({route}: CollectionStackScreenProps<'PlayerScreen'>
       setSelectedSong({
         id: song.id,
         storagePath: song.storagePath,
-        folderId: folderId,
+        parentFolderId: parentFolderId,
       }),
     );
   };
@@ -66,36 +62,104 @@ export const PlayerScreen = ({route}: CollectionStackScreenProps<'PlayerScreen'>
     dispatch(openReorderSongsModal());
   };
 
+  //Song Times from the metaData set in Redux
+  const metaDataMap = useSelector((state: RootState) => state.player.metaData);
+  const mappedSongTimes = (song: any) => useFormatTime(metaDataMap[song.name]?.duration ?? 0);
+
   return (
     <>
       <View style={styles.wholePage}>
         <SongUploadProgress />
         <View style={styles.namesAndSettingsButtonContainer}>
           <View>
-            <Text style={styles.subFolderName}>{subFolderName}</Text>
-            <Text style={styles.artistNameStyle}>{artistName}</Text>
+            {/* Placeholders for subFolder and parentFolder Name */}
+            {songs === null ? (
+              <SkeletonPlaceholder
+                borderRadius={4}
+                backgroundColor="rgba(123, 123, 125, 0.5)"
+                highlightColor="rgba(255, 255, 255, 1)">
+                <View style={{gap: 10}}>
+                  <SkeletonPlaceholder.Item
+                    style={{
+                      marginLeft: 10,
+                      marginTop: 4,
+                    }}
+                    width={100}
+                    height={18}
+                  />
+                  <SkeletonPlaceholder.Item
+                    style={{
+                      marginLeft: 10,
+                      marginBottom: 4,
+                    }}
+                    width={90}
+                    height={13}
+                  />
+                </View>
+              </SkeletonPlaceholder>
+            ) : (
+              <>
+                <Text style={styles.subFolderName}>{subFolderName}</Text>
+                <Text style={styles.parentFolderNameStyle}>{parentFolderName}</Text>
+              </>
+            )}
           </View>
           <View>
             <TouchableOpacity
               hitSlop={isIOS ? null : {top: 20, bottom: 20, left: 20, right: 20}}
-              //I'm not sure why but flexDirection:"row" is displacing hit detection
-              //of pressables in this component on Android but not IOS. Expanded hitSlop fixes
-              //  the issue for now but this needs to be sorted. I've already diagnosed that
-              //  it's not a higher level styling issue. It's specifc to this Screen/Component.
+              // I'm not sure why but flexDirection:"row" is displacing hit detection
+              // of pressables in this component on Android but not IOS. Expanded hitSlop fixes
+              // the issue for now but this needs to be sorted. I've already diagnosed that
+              // it's not a higher level styling issue. It's specifc to this Screen/Component.
               onPress={handlePlayerScreenMainOptionsPress}>
               <Entypo name="dots-three-vertical" size={30} color={'white'} />
             </TouchableOpacity>
           </View>
         </View>
 
-        {status === loadingStatuses.LOADING ? (
-          <ActivityIndicator size="large" color="#0078D7" />
-        ) : songs.length === 0 ? (
+        {/* Song PlaceHolders */}
+        {songs === null ? (
+          <SkeletonPlaceholder
+            borderRadius={4}
+            backgroundColor="rgba(123, 123, 125, 0.5)"
+            highlightColor="rgba(255, 255, 255, 1)">
+            <View>
+              <View
+                style={{
+                  paddingHorizontal: 20,
+                  paddingTop: 30,
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}>
+                <SkeletonPlaceholder.Item
+                  style={{
+                    marginLeft: 10,
+                  }}
+                  width={100}
+                  height={26}
+                />
+                <SkeletonPlaceholder.Item
+                  style={{
+                    marginLeft: 10,
+                  }}
+                  width={20}
+                  height={26}
+                />
+              </View>
+            </View>
+          </SkeletonPlaceholder>
+        ) : songs?.length === 0 ? (
           <>
             <View style={styles.noSongsContainer}>
               <Text style={styles.addASongText}>Upload A Song!</Text>
             </View>
-            <UploadSong folderId={folderId} />
+            <UploadSong
+              parentFolderName={parentFolderName}
+              parentFolderId={parentFolderId}
+              subFolderName={subFolderName}
+              subFolderId={subFolderId}
+            />
           </>
         ) : (
           <>
@@ -104,7 +168,8 @@ export const PlayerScreen = ({route}: CollectionStackScreenProps<'PlayerScreen'>
                 songs={songs}
                 onSongOptionsPress={handleSongOptionsPress}
                 subFolderName={subFolderName}
-                artistName={artistName}
+                parentFolderName={parentFolderName}
+                mappedSongTimes={mappedSongTimes}
                 showActionButton={true}
                 showOptionsButton={true}
                 mappedOptionsIcon={() => (
@@ -112,7 +177,15 @@ export const PlayerScreen = ({route}: CollectionStackScreenProps<'PlayerScreen'>
                 )}
               />
             </View>
-            <UploadSong folderId={folderId} />
+            <UploadSong
+              parentFolderName={parentFolderName}
+              parentFolderId={parentFolderId}
+              subFolderName={subFolderName}
+              subFolderId={subFolderId}
+              onUploadSuccess={async () => {
+                await TrackPlayer.setQueue(songs);
+              }}
+            />
             <PlayerScreenMainOptionsModal
               route={route.params}
               onReorderPress={handleReorderPress}
@@ -159,7 +232,7 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
   },
 
-  artistNameStyle: {
+  parentFolderNameStyle: {
     fontSize: 17,
     fontWeight: '300',
     color: 'white',

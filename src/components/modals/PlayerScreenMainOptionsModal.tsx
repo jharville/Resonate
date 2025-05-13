@@ -1,8 +1,7 @@
-import React, {useRef, useEffect, useState} from 'react';
+import React, {useRef, useEffect} from 'react';
 import {Text, TouchableOpacity, Animated, StyleSheet, Dimensions, View, Share} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../../store';
-import {auth} from '../../../firebaseConfig.tsx';
 import {closePlayerScreenMainOptionsModal} from '../../redux/playerScreenMainOptionsModalSlice.ts';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -16,7 +15,7 @@ export const PlayerScreenMainOptionsModal = ({
   route,
   onReorderPress,
 }: PlayerScreenMainOptionsModalProps) => {
-  const {folderId, artistName, subFolderName} = route;
+  const {parentFolderId, parentFolderName, subFolderName} = route;
   const dispatch = useDispatch();
   const isVisible = useSelector(
     (state: RootState) => state.playerScreenMainOptionsModal.isPlayerScreenMainOptionsModalVisible,
@@ -42,11 +41,12 @@ export const PlayerScreenMainOptionsModal = ({
 
   const handleShareButtonPress = async () => {
     try {
-      const url = `https://Resonate.com/player?folderId=${folderId}&artistName=${encodeURIComponent(
-        artistName,
+      const url = `https://Resonate.com/player?folderId=${parentFolderId}&artistName=${encodeURIComponent(
+        //ARTIST NAME SHOULDNT BE HERE
+        parentFolderName,
       )}&subFolderName=${encodeURIComponent(subFolderName)}`;
       await Share.share({
-        message: `Listen to "${subFolderName}" by ${artistName}
+        message: `Listen to "${subFolderName}" by ${parentFolderName}
         \n${url}`,
       });
     } catch (error) {
@@ -73,7 +73,7 @@ export const PlayerScreenMainOptionsModal = ({
           {/* Share */}
           <TouchableOpacity style={styles.pressableRow} onPress={handleShareButtonPress}>
             <FontAwesome6 name="share-from-square" size={28} color={'white'} />
-            <Text style={styles.pressableText}>Share</Text>
+            <Text style={styles.pressableText}>Share (Not Yet Available)</Text>
           </TouchableOpacity>
 
           {/* Reorder List */}
@@ -129,8 +129,8 @@ const styles = StyleSheet.create({
 
 type PlayerScreenMainOptionsModalProps = {
   route: {
-    folderId: string;
-    artistName: string;
+    parentFolderId: string;
+    parentFolderName: string;
     subFolderName: string;
   };
   onReorderPress: () => void;

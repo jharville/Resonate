@@ -19,7 +19,7 @@ export const RenameSubFolderModal = () => {
     dispatch(closeRenameSubFolderModal());
   };
 
-  const folderId = useSelector((state: RootState) => state.renameParentFolder.folderID);
+  const parentFolderId = useSelector((state: RootState) => state.renameParentFolder.parentFolderID);
   const subFolderId = useSelector((state: RootState) => state.renameSubFolder.subFolderID);
 
   const handleSave = async () => {
@@ -30,15 +30,15 @@ export const RenameSubFolderModal = () => {
       const subFolderRef = doc(
         db,
         'users',
-        user.uid,
-        'folders',
-        folderId,
+        `${user.displayName}: ${user.uid}`,
+        'parentfolders',
+        parentFolderId,
         'subfolders',
         subFolderId,
       );
 
       await updateDoc(subFolderRef, {
-        name: folderName,
+        subFolderName: folderName,
       });
 
       closeModal();

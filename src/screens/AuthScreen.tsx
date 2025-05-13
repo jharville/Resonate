@@ -21,13 +21,13 @@ import {RootNavigatorParamList} from '../navigation/types/navigation.types';
 import {auth, db} from '../../firebaseConfig';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {loadingStatuses, useLoadingStatus} from '../useLoadingStatuses';
+import {loadingStatuses, useLoadingStatus} from '../Hooks/useLoadingStatuses.ts';
 import FontAwesome from 'react-native-vector-icons/FontAwesome6';
 import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import {date, InferType, number, object, string} from 'yup';
-import {isIOS} from '../constants.ts';
+import {isIOS} from '../utilities/constants.ts';
 
 // let userSchema = object({
 //   name: string().required(),
@@ -69,7 +69,7 @@ export const AuthScreen = () => {
     setForm(prev => ({...prev, [field]: value}));
   };
 
-  // Sign In
+  // Handle Sign In
   const handleSignIn = async (): Promise<void> => {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, form.email, form.password);
@@ -91,7 +91,7 @@ export const AuthScreen = () => {
     }
   };
 
-  // Sign Up
+  // Handle Sign Up
   const handleSignUp = async (): Promise<void> => {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, form.email, form.password);
@@ -100,8 +100,10 @@ export const AuthScreen = () => {
         await updateProfile(user, {
           displayName: form.displayName,
         });
-        await setDoc(doc(db, 'users', user.uid), {
+
+        await setDoc(doc(db, 'users', `${form.displayName}: ${user.uid}`), {
           displayName: form.displayName,
+          id: user.uid,
           email: user.email,
           createdAt: serverTimestamp(),
         });
@@ -123,6 +125,8 @@ export const AuthScreen = () => {
       {error && <Text style={styles.error}>{error}</Text>}
 
       {!isSigningUp ? (
+        // Existing Sign In
+
         <>
           <View style={styles.inputAndIconRow}>
             <MaterialIcons name="email" style={{paddingHorizontal: 5}} size={30} color="#121329" />
@@ -130,8 +134,8 @@ export const AuthScreen = () => {
             <TextInput
               style={isIOS ? styles.iosInputEmail : styles.androidInputEmail}
               placeholder="Email"
+              placeholderTextColor={'#575867'}
               value={form.email}
-              placeholderTextColor={'black'}
               autoCapitalize="none"
               keyboardType="email-address"
               onChangeText={text => handleInputFieldChange('email', text)}
@@ -144,8 +148,8 @@ export const AuthScreen = () => {
             <TextInput
               style={isIOS ? styles.iosInput : styles.androidInput}
               placeholder="Password"
+              placeholderTextColor={'#575867'}
               value={form.password}
-              placeholderTextColor={'black'}
               secureTextEntry={!passwordVisible}
               autoCapitalize="none"
               onChangeText={text => handleInputFieldChange('password', text)}
@@ -159,14 +163,17 @@ export const AuthScreen = () => {
           </View>
         </>
       ) : (
+        // NEW Sign Up
+
         <>
           <View style={styles.signUpContainer}>
             <View style={styles.inputAndIconRow}>
               <Ionicons style={{paddingHorizontal: 5}} name="person" size={30} color="#121329" />
               {/* Display Name */}
               <TextInput
-                style={styles.androidInputEmail}
+                style={isIOS ? styles.iosInputEmail : styles.androidInputEmail}
                 placeholder="Display Name"
+                placeholderTextColor={'#575867'}
                 value={form.displayName}
                 autoCapitalize="none"
                 onChangeText={text => handleInputFieldChange('displayName', text)}
@@ -182,8 +189,9 @@ export const AuthScreen = () => {
               />
               {/* Email */}
               <TextInput
-                style={styles.androidInputEmail}
+                style={isIOS ? styles.iosInputEmail : styles.androidInputEmail}
                 placeholder="Email"
+                placeholderTextColor={'#575867'}
                 value={form.email}
                 autoCapitalize="none"
                 keyboardType="email-address"
@@ -200,8 +208,9 @@ export const AuthScreen = () => {
               />
               {/* Confirm Email  */}
               <TextInput
-                style={styles.androidInputEmail}
+                style={isIOS ? styles.iosInputEmail : styles.androidInputEmail}
                 placeholder="Confirm Email"
+                placeholderTextColor={'#575867'}
                 value={form.confirmEmail}
                 autoCapitalize="none"
                 keyboardType="email-address"
@@ -209,6 +218,7 @@ export const AuthScreen = () => {
               />
             </View>
 
+            {/* Enter New Password */}
             <View style={styles.inputAndIconRow}>
               <Ionicons
                 style={{paddingHorizontal: 5}}
@@ -216,10 +226,10 @@ export const AuthScreen = () => {
                 size={30}
                 color="#121329"
               />
-              {/* Password */}
               <TextInput
-                style={styles.androidInput}
+                style={isIOS ? styles.iosInput : styles.androidInput}
                 placeholder="Password"
+                placeholderTextColor={'#575867'}
                 value={form.password}
                 secureTextEntry={!passwordVisible}
                 autoCapitalize="none"
@@ -232,6 +242,7 @@ export const AuthScreen = () => {
               </TouchableOpacity>
             </View>
 
+            {/*Confirm New Password */}
             <View style={styles.inputAndIconRow}>
               <Ionicons
                 style={{paddingHorizontal: 5}}
@@ -239,10 +250,10 @@ export const AuthScreen = () => {
                 size={30}
                 color="#121329"
               />
-              {/*Confirm Password */}
               <TextInput
-                style={styles.androidInput}
+                style={isIOS ? styles.iosInput : styles.androidInput}
                 placeholder="Confirm Password"
+                placeholderTextColor={'#575867'}
                 value={form.confirmPassword}
                 secureTextEntry={!passwordVisible}
                 autoCapitalize="none"
@@ -257,6 +268,8 @@ export const AuthScreen = () => {
           </View>
         </>
       )}
+
+      {/* Sign In / Sign Up button */}
       <View>
         {isSigningUp ? (
           <TouchableOpacity onPress={handleSignUp}>
@@ -324,6 +337,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 5,
     borderBottomRightRadius: 5,
   },
+
   iosInputEmail: {
     flex: 1,
     borderWidth: 1,

@@ -3,20 +3,16 @@ import {createSlice} from '@reduxjs/toolkit';
 export const renameParentFolderSlice = createSlice({
   name: 'renameFolder',
   initialState: {
-    folderID: '',
-    folderName: '',
-    artistName: '',
+    parentFolderID: '',
+    parentFolderName: '',
     isRenameParentModalVisible: false,
   },
   reducers: {
     setParentFolderID: (state, action) => {
-      state.folderID = action.payload;
+      state.parentFolderID = action.payload;
     },
     setParentFolderName: (state, action) => {
-      state.folderName = action.payload;
-    },
-    setArtistName: (state, action) => {
-      state.artistName = action.payload;
+      state.parentFolderName = action.payload;
     },
     openRenameParentFolderModal: state => {
       state.isRenameParentModalVisible = true;
@@ -30,7 +26,6 @@ export const renameParentFolderSlice = createSlice({
 export const {
   setParentFolderID,
   setParentFolderName,
-  setArtistName,
   openRenameParentFolderModal,
   closeRenameParentFolderModal,
 } = renameParentFolderSlice.actions;

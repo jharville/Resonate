@@ -4,7 +4,7 @@ import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 type SelectedSong = {
   id: string;
   storagePath: string;
-  folderId: string;
+  parentFolderId: string;
 };
 
 export const selectedSongSlice = createSlice({

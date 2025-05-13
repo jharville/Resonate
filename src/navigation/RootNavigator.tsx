@@ -7,7 +7,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {onAuthStateChanged, FirebaseAuthTypes} from '@react-native-firebase/auth';
 import {clearUser, setUser} from '../redux/authSlice';
 import {auth} from '../../firebaseConfig';
-import {useSetupTrackPlayer} from '../useSetupTrackPlayer';
+import {useSetupTrackPlayer} from '../Hooks/useSetupTrackPlayer.tsx';
 import {RootState} from '../../store';
 import {ActivityIndicator, View} from 'react-native';
 

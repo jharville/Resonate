@@ -15,10 +15,10 @@ import firestore from '@react-native-firebase/firestore';
 import Octicons from 'react-native-vector-icons/Octicons';
 import Feather from 'react-native-vector-icons/Feather';
 import {Song, SongList} from '../SongList.tsx';
-import {useFetchSongs} from '../../useFetchSongs.tsx';
+import {useFetchSongs} from '../../Hooks/useFetchSongs.tsx';
 import {RootState} from '../../../store.tsx';
 import {closeReorderSongsModal, setHasReorderedSongs} from '../../redux/reorderSongsModalSlice.ts';
-import {isIOS} from '../../constants.ts';
+import {isIOS} from '../../utilities/constants.ts';
 
 // This is the Reorder Songs Modal.
 // It allows the user to Reorder the playlist and download the whole list.
@@ -27,18 +27,19 @@ import {isIOS} from '../../constants.ts';
 
 export const ReorderSongsModal = () => {
   const dispatch = useDispatch();
-  const {folderId, artistName, subFolderName} = useSelector(
+  const {parentFolderId, subFolderId, parentFolderName, subFolderName} = useSelector(
     (state: RootState) => state.routeParams,
   );
   const isVisible = useSelector(
     (state: RootState) => state.reorderSongsModal.isReorderSongsModalVisible,
   );
   const user = auth.currentUser;
-  const fetchedSongs = useFetchSongs(folderId);
+  if (!user) return;
+  const fetchedSongs = useFetchSongs({parentFolderId, subFolderId});
   const [songs, setSongs] = useState<Song[]>([]);
 
   useEffect(() => {
-    if (fetchedSongs.length > 0) {
+    if (fetchedSongs && fetchedSongs.length > 0) {
       setSongs(fetchedSongs);
     }
   }, [fetchedSongs]);
@@ -65,9 +66,11 @@ export const ReorderSongsModal = () => {
     try {
       const songsRef = firestore()
         .collection('users')
-        .doc(user?.uid)
-        .collection('folders')
-        .doc(folderId)
+        .doc(`${user.displayName}: ${user.uid}`)
+        .collection('parentfolders')
+        .doc(parentFolderId)
+        .collection('subfolders')
+        .doc(subFolderId)
         .collection('songs');
 
       const batch = firestore().batch();
@@ -121,7 +124,7 @@ export const ReorderSongsModal = () => {
               songs={songs}
               setSongs={setSongs}
               subFolderName={subFolderName}
-              artistName={artistName}
+              parentFolderName={parentFolderName}
               showOptionsButton={true}
               showBottomBorders={true}
               borderColor="#666a6f"

@@ -22,10 +22,10 @@ import {setSubFolderName} from '../../redux/renameSubFolderSlice.ts';
 
 export const UploadSubFolderModal = ({
   parentFolderId,
-  artistName,
+  parentFolderName,
 }: {
   parentFolderId: string;
-  artistName: string;
+  parentFolderName: string;
 }) => {
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -36,7 +36,6 @@ export const UploadSubFolderModal = ({
   const slideAnim = useRef(new Animated.Value(screenWidth)).current;
 
   const openModal = () => {
-    console.log('PRESSED');
     dispatch(setSubFolderName(''));
     setModalVisible(true);
     Animated.timing(slideAnim, {
@@ -70,16 +69,17 @@ export const UploadSubFolderModal = ({
 
     try {
       const newSubfolder = {
-        name: subFolderName.trim(),
-        artistName: artistName.trim(),
+        user: user.uid,
+        subFolderName: subFolderName.trim(),
+        storedInParentFolder: parentFolderName,
         createdAt: serverTimestamp(),
       };
 
       const subfolderRef = collection(
         db,
         'users',
-        user.uid,
-        'folders',
+        `${user.displayName}: ${user.uid}`,
+        'parentfolders',
         parentFolderId,
         'subfolders',
       );

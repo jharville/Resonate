@@ -1,4 +1,4 @@
-import React, {useRef, useEffect} from 'react';
+import React, {useRef, useEffect, useState} from 'react';
 import {Text, TouchableOpacity, Animated, StyleSheet, Dimensions, View} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../../store';
@@ -16,6 +16,7 @@ export const ProfileModal = () => {
   const dispatch = useDispatch();
   const isVisible = useSelector((state: RootState) => state.profileModal.isProfileModalVisible);
   const slideAnim = useRef(new Animated.Value(Dimensions.get('window').width)).current;
+  const [shouldRender, setShouldRender] = useState(false);
 
   const app = getApp();
   const auth = getAuth(app);
@@ -24,17 +25,20 @@ export const ProfileModal = () => {
 
   useEffect(() => {
     if (isVisible) {
+      setShouldRender(true);
       Animated.timing(slideAnim, {
         toValue: 0,
-        duration: 400,
+        duration: 500,
         useNativeDriver: true,
       }).start();
     } else {
       Animated.timing(slideAnim, {
         toValue: Dimensions.get('window').width,
-        duration: 400,
+        duration: 500,
         useNativeDriver: true,
-      }).start();
+      }).start(() => {
+        setShouldRender(false);
+      });
     }
   }, [isVisible]);
 
@@ -54,44 +58,63 @@ export const ProfileModal = () => {
 
   return (
     <>
-      <Animated.View style={[styles.menu, {transform: [{translateX: slideAnim}]}]}>
-        <View style={styles.itemsContainer}>
-          <TouchableOpacity style={styles.menuItem} onPress={() => dispatch(closeProfileModal())}>
-            <Ionicons name="person" size={30} color="#fff" />
-            <Text style={styles.menuText}>{userName}</Text>
-          </TouchableOpacity>
+      {shouldRender && (
+        <TouchableOpacity
+          activeOpacity={1}
+          style={styles.backdrop}
+          onPress={() => dispatch(closeProfileModal())}>
+          <Animated.View
+            style={[styles.menu, {transform: [{translateX: slideAnim}]}]}
+            onStartShouldSetResponder={() => true}>
+            <View style={styles.itemsContainer}>
+              <TouchableOpacity
+                style={styles.menuItem}
+                onPress={() => dispatch(closeProfileModal())}>
+                <Ionicons name="person" size={30} color="#fff" />
+                <Text style={styles.menuText}>{userName}</Text>
+              </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuItem} onPress={() => dispatch(closeProfileModal())}>
-            <Ionicons name="person-outline" size={30} color="#fff" />
-            <Text style={styles.menuText}>Edit Profile</Text>
-          </TouchableOpacity>
+              {/* <TouchableOpacity style={styles.menuItem} onPress={() => dispatch(closeProfileModal())}>
+                <Ionicons name="person-outline" size={30} color="#fff" />
+                <Text style={styles.menuText}>Edit Profile</Text>
+              </TouchableOpacity> */}
+              {/* 
+              <TouchableOpacity style={styles.menuItem} onPress={() => dispatch(closeProfileModal())}>
+                <FontAwesome name="cog" size={30} color="#fff" />
+                <Text style={styles.menuText}>Preferences</Text>
+              </TouchableOpacity> */}
 
-          <TouchableOpacity style={styles.menuItem} onPress={() => dispatch(closeProfileModal())}>
-            <FontAwesome name="cog" size={30} color="#fff" />
-            <Text style={styles.menuText}>Preferences</Text>
-          </TouchableOpacity>
+              <TouchableOpacity style={styles.menuItem} onPress={handleSignOut}>
+                <FontAwesome name="sign-out" size={30} color="#fff" />
+                <Text style={styles.menuText}>Sign Out</Text>
+              </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuItem} onPress={handleSignOut}>
-            <FontAwesome name="sign-out" size={30} color="#fff" />
-            <Text style={styles.menuText}>Sign Out</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.closeButton}
-            onPress={() => dispatch(closeProfileModal())}>
-            <Text style={styles.closeText}>Close</Text>
-          </TouchableOpacity>
-        </View>
-      </Animated.View>
+              <TouchableOpacity
+                style={styles.closeButton}
+                onPress={() => dispatch(closeProfileModal())}>
+                <Text style={styles.closeText}>Close</Text>
+              </TouchableOpacity>
+            </View>
+          </Animated.View>
+        </TouchableOpacity>
+      )}
     </>
   );
 };
 
 const styles = StyleSheet.create({
-  menu: {
+  backdrop: {
     position: 'absolute',
     top: 0,
+    bottom: 0,
+    left: 0,
     right: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.423)',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-end',
+  },
+
+  menu: {
     width: 200,
     height: '100%',
     backgroundColor: '#333',

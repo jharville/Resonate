@@ -5,12 +5,15 @@ import {RootState} from '../../../store.tsx';
 import {closeRenameSongModal, setSongName} from '../../redux/renameSongSlice.ts';
 import {auth, db} from '../../../firebaseConfig.tsx';
 import {doc, updateDoc} from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage';
 
 export const RenameSongModal = () => {
   const dispatch = useDispatch();
   const isVisible = useSelector((state: RootState) => state.renameSong.isRenameSongModalVisible);
   const newName = useSelector((state: RootState) => state.renameSong.songName);
   const selectedSong = useSelector((state: RootState) => state.selectedSong);
+  const parentFolderId = useSelector((state: RootState) => state.routeParams.parentFolderId);
+  const subFolderId = useSelector((state: RootState) => state.routeParams.subFolderId);
 
   const closeModal = () => {
     dispatch(closeRenameSongModal());
@@ -18,21 +21,38 @@ export const RenameSongModal = () => {
 
   const handleSave = async () => {
     const user = auth.currentUser;
-    if (!user || !selectedSong?.id || !selectedSong?.folderId) return;
+    if (!user || !selectedSong?.id || !selectedSong?.parentFolderId) return;
 
     try {
       const songRef = doc(
         db,
         'users',
-        user.uid,
-        'folders',
-        selectedSong.folderId,
+        `${user.displayName}: ${user.uid}`,
+        'parentfolders',
+        parentFolderId,
+        'subfolders',
+        subFolderId,
         'songs',
         selectedSong.id,
       );
 
+      //Updates FireStore Database metadata
       await updateDoc(songRef, {
-        name: newName,
+        songName_current: newName,
+      });
+
+      // Updates Firebase Storage metadata
+      const storageRef = storage().ref(selectedSong.storagePath);
+      const currentMetaData = await storageRef.getMetadata();
+      const existingCustom = currentMetaData.customMetadata || {};
+
+      await storageRef.updateMetadata({
+        customMetadata: {
+          ...existingCustom, // keep all previous metadata
+          songName_current: newName,
+          updatedAt: new Date().toISOString(),
+          updatedBy: `${user.displayName}: ${user.uid}`,
+        },
       });
 
       closeModal();

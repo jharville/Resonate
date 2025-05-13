@@ -20,6 +20,7 @@ import storage from '@react-native-firebase/storage';
 import firestore from '@react-native-firebase/firestore';
 import {clearSelectedSong} from '../../redux/selectedSongSlice.ts';
 import {openRenameSongModal} from '../../redux/renameSongSlice.ts';
+import TrackPlayer from 'react-native-track-player';
 
 // This is the SONG Options Modal.
 // It allows the user to rename, move, or delete a Song
@@ -31,6 +32,8 @@ export const SongOptionsModal = () => {
   const isVisible = useSelector(
     (state: RootState) => state.songOptionsModal.isSongOptionsModalVisible,
   );
+  const parentFolderId = useSelector((state: RootState) => state.routeParams.parentFolderId);
+  const subFolderId = useSelector((state: RootState) => state.routeParams.subFolderId);
 
   const slideAnim = useRef(new Animated.Value(Dimensions.get('window').width)).current;
 
@@ -59,8 +62,10 @@ export const SongOptionsModal = () => {
     setTrashModalVisible(true);
   };
 
-  const selectedSong = useSelector((state: RootState) => state.selectedSong);
   const user = auth.currentUser;
+  const selectedSong = useSelector((state: RootState) => state.selectedSong);
+
+  // Delete Song Function
   const handleYesDeletePress = async () => {
     try {
       if (!user || !selectedSong) throw new Error('Missing user or song');
@@ -71,9 +76,11 @@ export const SongOptionsModal = () => {
       // 2. Delete Firestore document
       await firestore()
         .collection('users')
-        .doc(user.uid)
-        .collection('folders')
-        .doc(selectedSong.folderId)
+        .doc(`${user.displayName}: ${user.uid}`)
+        .collection('parentfolders')
+        .doc(parentFolderId)
+        .collection('subfolders')
+        .doc(subFolderId)
         .collection('songs')
         .doc(selectedSong.id)
 

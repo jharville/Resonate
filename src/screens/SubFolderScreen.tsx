@@ -1,17 +1,10 @@
 import React, {useEffect, useState} from 'react';
-import {
-  StyleSheet,
-  View,
-  ScrollView,
-  ActivityIndicator,
-  Text,
-  TouchableOpacity,
-} from 'react-native';
+import {StyleSheet, View, ScrollView, Text, TouchableOpacity} from 'react-native';
 import {CollectionStackScreenProps} from '../navigation/types/navigation.types.ts';
 import {Folder} from '../components/Folder.tsx';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../store.tsx';
-import {loadingStatuses, useLoadingStatus} from '../useLoadingStatuses.tsx';
+import {loadingStatuses, useLoadingStatus} from '../Hooks/useLoadingStatuses.ts';
 import {collection, onSnapshot, query, orderBy} from '@react-native-firebase/firestore';
 import {db} from '../../firebaseConfig.tsx';
 import {togglesubFolderOptionsModal} from '../redux/subFolderOptionsModalSlice.ts';
@@ -19,101 +12,148 @@ import {setSubFolderID, setSubFolderName} from '../redux/renameSubFolderSlice.ts
 import {UploadSubFolderModal} from '../components/modals/UploadSubFolderModal.tsx';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {setParentFolderID} from '../redux/renameParentFolderSlice.ts';
+import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 
-// // This is the "SubFolder" Screen. All Subfolders stored within a folder from "Collection Screen" will be listed in this stack.
+// This is the "SubFolder" Screen. All Subfolders stored within a Parent Folder from "Collection Screen" will be listed in this stack.
 
 export const SubFolderScreen = ({
   route,
   navigation,
 }: CollectionStackScreenProps<'SubFolderScreen'>) => {
-  const {status} = useLoadingStatus();
+  const {status, startLoading, setDoneLoading} = useLoadingStatus();
   const [subFolders, setSubFolders] = useState<
     {
-      artistName: string;
-      id: string;
-      name: string;
+      parentFolderName: string;
+      subFolderId: string;
+      subFolderName: string;
       imageURL: string | null;
     }[]
   >([]);
-  const {folderId, artistName} = route.params;
+  const {parentFolderId, parentFolderName} = route.params;
   const dispatch = useDispatch();
-
   const user = useSelector((state: RootState) => state.auth.user);
 
-  const handleFolderPress = (folder: {id: string; name: string; artistName: string}) => {
+  const handleSubFolderPress = (subFolder: {
+    subFolderId: string;
+    subFolderName: string;
+    parentFolderName: string;
+  }) => {
     navigation.navigate('PlayerScreen', {
-      folderId: folder.id,
-      subFolderName: folder.name,
-      artistName: folder.artistName,
+      parentFolderId,
+      parentFolderName: subFolder.parentFolderName,
+      subFolderId: subFolder.subFolderId,
+      subFolderName: subFolder.subFolderName,
     });
   };
 
-  const handleThreeDotPress = (folder: {id: string; name: string}) => {
-    dispatch(setParentFolderID(folderId));
-    dispatch(setSubFolderID(folder.id));
-    dispatch(setSubFolderName(folder.name));
+  const handleThreeDotPress = (subFolder: {subFolderId: string; subFolderName: string}) => {
+    dispatch(setParentFolderID(parentFolderId));
+    dispatch(setSubFolderID(subFolder.subFolderId));
+    dispatch(setSubFolderName(subFolder.subFolderName));
     dispatch(togglesubFolderOptionsModal());
   };
 
+  //for dynamically displaying subfolders
   useEffect(() => {
     if (!user) return;
+    startLoading();
+    const subFoldersRef = collection(
+      db,
+      'users',
+      `${user.displayName}: ${user.uid}`,
+      'parentfolders',
+      parentFolderId,
+      'subfolders',
+    );
+    const q = query(subFoldersRef, orderBy('createdAt', 'desc'));
 
-    const foldersRef = collection(db, 'users', user.uid, 'folders', folderId, 'subfolders');
-    const q = query(foldersRef, orderBy('createdAt', 'desc'));
-
-    const unsubscribe = onSnapshot(q, snapshot => {
-      const subFolderList = snapshot.docs.map(doc => {
-        return {
-          id: doc.id,
-          artistName: doc.data().artistName || 'Untitled',
-          name: doc.data().name || 'Untitled',
-          imageURL: doc.data().imageURL || null,
-        };
-      });
+    //In Firebase, a snapshot represents a real-time “snapshot” of data at a specific location Firestore database.
+    //When used in a listener like onSnapshot, it's what gives you live updates.
+    //If you don’t call cleanupFunction(), the listener keeps running — even when the component unmounts
+    const cleanupFunction = onSnapshot(q, snapshot => {
+      const subFolderList = snapshot.docs.map(doc => ({
+        subFolderId: doc.id,
+        parentFolderName: doc.data().storedInParentFolder || 'Untitled',
+        subFolderName: doc.data().subFolderName || 'Untitled',
+        imageURL: doc.data().imageURL || null,
+      }));
 
       setSubFolders(subFolderList);
     });
 
-    return () => unsubscribe();
-  }, [user]);
+    setDoneLoading();
+    return () => cleanupFunction();
+  }, [user, parentFolderId]);
 
   const handleSubMainOptionsPress = () => {
-    console.log('Pressed');
+    console.log('Subfolder main menu pressed');
   };
 
   return (
     <View style={styles.wholePage}>
-      <View style={styles.artistNameContainer}>
-        <Text style={styles.artistNameStyle}>{artistName}</Text>
-        <TouchableOpacity onPress={handleSubMainOptionsPress}>
-          <Entypo name="dots-three-vertical" style={styles.settingsButtonStyle} />
-        </TouchableOpacity>
+      <View style={styles.parentFolderNameContainer}>
+        {status === loadingStatuses.LOADING ? (
+          <SkeletonPlaceholder
+            borderRadius={4}
+            backgroundColor="rgba(123, 123, 125, 0.5)"
+            highlightColor="rgba(255, 255, 255, 1)">
+            <View>
+              <SkeletonPlaceholder.Item
+                style={{
+                  marginLeft: 10,
+                }}
+                width={100}
+                height={26}
+              />
+            </View>
+          </SkeletonPlaceholder>
+        ) : (
+          <>
+            <Text style={styles.parentNameStyle}>{parentFolderName}</Text>
+            <TouchableOpacity onPress={handleSubMainOptionsPress}>
+              <Entypo name="dots-three-vertical" style={styles.settingsButtonStyle} />
+            </TouchableOpacity>
+          </>
+        )}
       </View>
+
       {status === loadingStatuses.LOADING ? (
-        <ActivityIndicator size="large" color="#0078D7" />
+        <SkeletonPlaceholder
+          borderRadius={4}
+          backgroundColor="rgba(123, 123, 125, 0.5)"
+          highlightColor="rgba(255, 255, 255, 1)">
+          <View style={{paddingHorizontal: 40, paddingTop: 20, alignItems: 'center'}}>
+            <SkeletonPlaceholder.Item width={'100%'} height={225} borderRadius={6} />
+          </View>
+        </SkeletonPlaceholder>
       ) : subFolders.length === 0 ? (
         <View style={styles.noFoldersContainer}>
-          <Text style={styles.addAFolderText}>Add a Subfolder!</Text>
+          <Text style={styles.addAFolderText}>Now add a Subfolder!</Text>
         </View>
       ) : (
         <ScrollView
           showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}>
-          {subFolders.map(folder => (
-            <View key={folder.id} style={styles.folderContainer}>
+          {subFolders.map(subFolder => (
+            <View key={subFolder.subFolderId} style={styles.folderContainer}>
               <Folder
-                folderName={folder.name}
-                imageURL={folder.imageURL}
-                onPress={() => handleFolderPress(folder)}
-                onThreeDotPress={() => handleThreeDotPress(folder)}
+                subFolderName={subFolder.subFolderName}
+                imageURL={subFolder.imageURL}
+                onPress={() => handleSubFolderPress(subFolder)}
+                onThreeDotPress={() =>
+                  handleThreeDotPress({
+                    subFolderId: subFolder.subFolderId,
+                    subFolderName: subFolder.subFolderName,
+                  })
+                }
               />
             </View>
           ))}
         </ScrollView>
       )}
 
-      <UploadSubFolderModal parentFolderId={folderId} artistName={artistName} />
+      <UploadSubFolderModal parentFolderId={parentFolderId} parentFolderName={parentFolderName} />
     </View>
   );
 };
@@ -124,7 +164,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#151314',
   },
 
-  artistNameContainer: {
+  parentFolderNameContainer: {
     backgroundColor: '#2C2F33',
     paddingVertical: 20,
     flexDirection: 'row',
@@ -133,7 +173,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
 
-  artistNameStyle: {
+  parentNameStyle: {
     fontSize: 20,
     fontWeight: 'bold',
     color: 'white',

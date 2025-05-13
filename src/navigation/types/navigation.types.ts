@@ -12,8 +12,13 @@ export type AuthStackParamList = {
 
 export type CollectionStackParamList = {
   CollectionScreen: undefined;
-  SubFolderScreen: {folderId: string; name: string; artistName: string};
-  PlayerScreen: {folderId: string; subFolderName: string; artistName: string};
+  SubFolderScreen: {parentFolderId: string; parentFolderName: string};
+  PlayerScreen: {
+    parentFolderId: string;
+    parentFolderName: string;
+    subFolderId: string;
+    subFolderName: string;
+  };
 };
 
 export type RootNavigatorScreenProps<T extends keyof RootNavigatorParamList> =

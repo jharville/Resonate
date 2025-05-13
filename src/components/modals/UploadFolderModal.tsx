@@ -18,21 +18,21 @@ import {collection, doc, serverTimestamp, setDoc} from '@react-native-firebase/f
 import {ToggleButton} from '../ToggleButton';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../../store.tsx';
-import {setArtistName, setParentFolderName} from '../../redux/renameParentFolderSlice.ts';
+import {setParentFolderName} from '../../redux/renameParentFolderSlice.ts';
 
 export const UploadFolderModal = () => {
   const [modalVisible, setModalVisible] = useState(false);
 
   const dispatch = useDispatch();
-  const folderName = useSelector((state: RootState) => state.renameParentFolder.folderName);
-  const artistName = useSelector((state: RootState) => state.renameParentFolder.artistName);
+  const parentFolderName = useSelector(
+    (state: RootState) => state.renameParentFolder.parentFolderName,
+  );
 
   const screenWidth = Dimensions.get('window').width;
   const slideAnim = useRef(new Animated.Value(screenWidth)).current;
 
   const openModal = () => {
     dispatch(setParentFolderName(''));
-    dispatch(setArtistName(''));
     setModalVisible(true);
     Animated.timing(slideAnim, {
       toValue: 0, // Moves left
@@ -58,20 +58,22 @@ export const UploadFolderModal = () => {
       return;
     }
 
-    if (!artistName.trim()) {
+    if (!parentFolderName.trim()) {
       Alert.alert('Error', 'Please enter an Artist Name.');
       return;
     }
 
     try {
       const newFolder = {
-        name: folderName.trim(),
-        artistName: artistName.trim(),
+        user: user.uid,
+        parentFolderName: parentFolderName.trim(),
         createdAt: serverTimestamp(),
       };
-      await setDoc(doc(collection(db, 'users', user.uid, 'folders')), newFolder);
+      await setDoc(
+        doc(collection(db, 'users', `${user.displayName}: ${user.uid}`, 'parentfolders')),
+        newFolder,
+      );
       dispatch(setParentFolderName(''));
-      dispatch(setArtistName(''));
       closeModal();
     } catch (error) {
       console.error('Error creating folder:', error);
@@ -102,8 +104,8 @@ export const UploadFolderModal = () => {
                   style={styles.input}
                   placeholder="Artist Name (e.g. Metallica)"
                   placeholderTextColor="#FFFFFF"
-                  value={artistName}
-                  onChangeText={text => dispatch(setArtistName(text))}
+                  value={parentFolderName}
+                  onChangeText={text => dispatch(setParentFolderName(text))}
                 />
               </View>
 

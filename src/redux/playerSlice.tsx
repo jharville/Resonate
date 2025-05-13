@@ -3,8 +3,9 @@ import {AddTrack, Track} from 'react-native-track-player';
 
 const initialPlayerState: PlayerState = {
   activeTrack: null, // Default: No track is active
+  parentFolderName: '',
   subFolderName: '',
-  artistName: '',
+  metaData: {},
 };
 
 const playerSlice = createSlice({
@@ -17,20 +18,40 @@ const playerSlice = createSlice({
     },
     setSubFolderInfo: (
       state,
-      action: PayloadAction<{subFolderName: string; artistName: string}>,
+      action: PayloadAction<{subFolderName: string; parentFolderName: string}>,
     ) => {
       state.subFolderName = action.payload.subFolderName;
-      state.artistName = action.payload.artistName;
+      state.parentFolderName = action.payload.parentFolderName;
+    },
+    setAudioMetaData: (
+      state,
+      action: PayloadAction<{songName: string; metaData: AudioMetaData}>,
+    ) => {
+      state.metaData[action.payload.songName] = action.payload.metaData;
     },
   },
 });
 
-export const {setActiveTrack, setSubFolderInfo} = playerSlice.actions;
+export const {setActiveTrack, setSubFolderInfo, setAudioMetaData} = playerSlice.actions;
 
 export const playerReducer = playerSlice.reducer;
 
 export interface PlayerState {
   activeTrack: AddTrack | null; // this is TrackPlayers own imported type for a track
-  subFolderName?: string; // optional at start
-  artistName?: string;
+  parentFolderName?: string;
+  subFolderName?: string;
+  metaData: Record<string, AudioMetaData>; // <- KEY: songName, VALUE: metadata
 }
+
+export type AudioMetaData = {
+  sampleRate?: number | undefined;
+  channelCount?: number | undefined;
+  bitDepth?: number | undefined;
+  duration?: number | undefined;
+  fileType?: string | undefined;
+  bitRate?: number | undefined;
+  loudnessLufs?: number | undefined;
+  fileSize?: number | undefined;
+  waveform?: number[] | undefined;
+  subFolderImageUrl?: string | null;
+};

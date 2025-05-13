@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import TrackPlayer, {State, usePlaybackState} from 'react-native-track-player';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -11,7 +11,7 @@ export const SongList = ({
   setSongs,
   onSongOptionsPress,
   subFolderName,
-  artistName,
+  parentFolderName,
   showOptionsButton,
   showActionButton,
   showCustomButton,
@@ -20,6 +20,7 @@ export const SongList = ({
   showBottomBorders,
   borderColor,
   wholeSongContainerStyle,
+  mappedSongTimes,
 }: SongListProps) => {
   const playbackState = usePlaybackState();
   const activeTrack = useSelector((state: {player: PlayerState}) => state.player.activeTrack);
@@ -36,9 +37,9 @@ export const SongList = ({
       case State.Playing:
       case State.Loading:
       case State.Buffering:
-      case State.Ready:
         return <MaterialIcons name="pause-circle-outline" size={40} color="#fff" />;
       case State.Paused:
+      case State.Ready:
       case State.Stopped:
       case State.Ended:
       case State.None:
@@ -50,36 +51,36 @@ export const SongList = ({
     }
   };
 
-  const inactiveState =
-    playbackState.state === State.Ended ||
-    playbackState.state === State.None ||
-    playbackState.state === State.Paused ||
-    playbackState.state === State.Stopped ||
-    playbackState.state === State.Error ||
-    playbackState.state === State.Ready ||
-    playbackState.state === undefined;
-
-  const handleSongAction = async (song: Song) => {
-    if (playbackState.state === State.Playing) {
-      await TrackPlayer.pause();
-    } else if (inactiveState) {
-      const currentQueue = await TrackPlayer.getQueue();
-      if (currentQueue.length === 0) {
-        await TrackPlayer.setQueue(songs);
-      }
+  const handleSongAction = useCallback(
+    async (song: Song) => {
       const index = songs.findIndex(s => s.id === song.id);
       if (index === -1) return;
+
+      const currentQueue = await TrackPlayer.getQueue();
+      const currentTrackId = await TrackPlayer.getActiveTrackIndex();
+
+      const isSameQueue =
+        currentQueue.length === songs.length &&
+        currentQueue.every((track, i) => track.id === songs[i].id);
+
+      if (!isSameQueue || currentTrackId == null) {
+        await TrackPlayer.reset();
+        await TrackPlayer.setQueue(songs);
+      }
+
       await TrackPlayer.skip(index);
-      TrackPlayer.play();
+      await TrackPlayer.play();
+
       dispatch(setActiveTrack(song));
-      dispatch(setSubFolderInfo({subFolderName, artistName}));
-    }
-  };
+      dispatch(setSubFolderInfo({subFolderName, parentFolderName}));
+    },
+    [songs, dispatch, subFolderName, parentFolderName],
+  );
 
   return (
     <DraggableFlatList
       data={songs}
-      keyExtractor={item => item.id}
+      keyExtractor={item => item?.id}
       onDragEnd={({data}) => {
         setSongs?.(data);
       }}
@@ -90,26 +91,36 @@ export const SongList = ({
             styles.mappedSongsStyle,
             showBottomBorders && {borderBottomWidth: 2, borderColor: borderColor || '#2C2F33'},
           ]}>
-          <View style={styles.iconAndSongContainer}>
+          <View style={styles.iconSongAndTimeContainer}>
             {showCustomButton && mappedCustomButton?.(item, drag)}
 
+            {/* Main Action Button */}
             {showActionButton && (
               <TouchableOpacity onPress={() => handleSongAction(item)}>
                 {getActionButton(item)}
               </TouchableOpacity>
             )}
-
+            {/* Song Container */}
             <View style={styles.songContainer}>
               <Text style={styles.songText} numberOfLines={1} ellipsizeMode="tail">
-                {item.name}
+                {item?.name}
               </Text>
             </View>
 
-            {showOptionsButton && (
-              <TouchableOpacity onPress={() => onSongOptionsPress?.(item)}>
-                {mappedOptionsIcon?.(item)}
-              </TouchableOpacity>
-            )}
+            {/* Times And Options Container */}
+            <View style={styles.timesAndOptionsContainer}>
+              {/* Song Times */}
+              <View>
+                <Text style={styles.songTime}>{mappedSongTimes?.(item)}</Text>
+              </View>
+
+              {/* Song Options on the Right */}
+              {showOptionsButton && (
+                <TouchableOpacity onPress={() => onSongOptionsPress?.(item)}>
+                  {mappedOptionsIcon?.(item)}
+                </TouchableOpacity>
+              )}
+            </View>
           </View>
         </View>
       )}
@@ -131,7 +142,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
-  iconAndSongContainer: {
+  iconSongAndTimeContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
@@ -147,6 +158,18 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 15,
   },
+
+  songTime: {
+    color: 'white',
+    fontSize: 15,
+  },
+
+  timesAndOptionsContainer: {
+    gap: 5,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
 });
 
 export type Song = {
@@ -160,7 +183,8 @@ type SongListProps = {
   setSongs?: (songs: Song[]) => void;
   onSongOptionsPress?: (song: Song) => void | null;
   subFolderName: string;
-  artistName: string;
+  parentFolderName: string;
+  mappedSongTimes?: (song: Song) => string;
   showOptionsButton?: boolean;
   showActionButton?: boolean;
   showCustomButton?: boolean;

@@ -1,47 +1,52 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 
 interface RouteParamsState {
+  parentFolderId: string;
+  parentFolderName: string;
+  subFolderId: string;
   subFolderName: string;
-  artistName: string;
-  folderId: string;
 }
 
 const initialState: RouteParamsState = {
+  parentFolderId: '',
+  parentFolderName: '',
+  subFolderId: '',
   subFolderName: '',
-  artistName: '',
-  folderId: '',
 };
 
 export const routeParamsSlice = createSlice({
   name: 'routeParams',
   initialState,
   reducers: {
+    setFolderId: (state, action: PayloadAction<string>) => {
+      state.parentFolderId = action.payload;
+    },
     setSubFolderInfo: (
       state,
-      action: PayloadAction<{subFolderName: string; artistName: string}>,
+      action: PayloadAction<{subFolderId: string; subFolderName: string; artistName: string}>,
     ) => {
+      state.subFolderName = action.payload.subFolderId;
       state.subFolderName = action.payload.subFolderName;
-      state.artistName = action.payload.artistName;
-    },
-    setFolderId: (state, action: PayloadAction<string>) => {
-      state.folderId = action.payload;
+      state.parentFolderName = action.payload.artistName;
     },
     setFullRouteInfo: (
       state,
       action: PayloadAction<{
-        folderId: string;
-        artistName: string;
+        parentFolderId: string;
+        parentFolderName: string;
+        subFolderId: string;
         subFolderName: string;
       }>,
     ) => {
-      const {folderId, artistName, subFolderName} = action.payload;
-      state.folderId = folderId;
-      state.artistName = artistName;
+      const {parentFolderId, parentFolderName, subFolderId, subFolderName} = action.payload;
+      state.parentFolderId = parentFolderId;
+      state.parentFolderName = parentFolderName;
+      state.subFolderId = subFolderId;
       state.subFolderName = subFolderName;
     },
   },
 });
 
-export const {setSubFolderInfo, setFolderId, setFullRouteInfo} = routeParamsSlice.actions;
+export const {setFolderId, setSubFolderInfo, setFullRouteInfo} = routeParamsSlice.actions;
 
 export const routeParamsReducer = routeParamsSlice.reducer;

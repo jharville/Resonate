@@ -5,61 +5,52 @@ import {Folder} from '../components/Folder';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../store';
 import {UploadFolderModal} from '../components/modals/UploadFolderModal.tsx';
-import {loadingStatuses, useLoadingStatus} from '../useLoadingStatuses';
+import {loadingStatuses, useLoadingStatus} from '../Hooks/useLoadingStatuses.ts';
 import {collection, onSnapshot, query, orderBy} from '@react-native-firebase/firestore';
 import {db} from '../../firebaseConfig';
 import {toggleParentFolderOptionsModal} from '../redux/parentFolderOptionsModalSlice.ts';
-import {
-  setParentFolderID,
-  setArtistName,
-  setParentFolderName,
-} from '../redux/renameParentFolderSlice.ts';
+import {setParentFolderID, setParentFolderName} from '../redux/renameParentFolderSlice.ts';
 
 // This is the "Collection Screen". All unique Folders will be listed in this stack.
 
 export const CollectionScreen = ({navigation}: CollectionStackScreenProps<'CollectionScreen'>) => {
+  const dispatch = useDispatch();
+  const user = useSelector((state: RootState) => state.auth.user);
   const {status} = useLoadingStatus();
   const [parentFolders, setParentFolders] = useState<
     {
-      artistName: string;
-      id: string;
-      name: string;
+      parentFolderID: string;
+      parentFolderName: string;
       imageURL: string | null;
     }[]
   >([]);
-  const dispatch = useDispatch();
 
-  const user = useSelector((state: RootState) => state.auth.user);
-
-  const handleFolderPress = (folder: {id: string; name: string; artistName: string}) => {
+  const handleFolderPress = (folder: {parentFolderId: string; parentFolderName: string}) => {
     navigation.navigate('SubFolderScreen', {
-      folderId: folder.id,
-      name: folder.name,
-      artistName: folder.artistName,
+      parentFolderId: folder.parentFolderId,
+      parentFolderName: folder.parentFolderName,
     });
   };
 
-  const handleThreeDotPress = (folder: {id: string; name: string; artistName: string}) => {
-    dispatch(setParentFolderID(folder.id));
-    dispatch(setParentFolderName(folder.name));
-    dispatch(setArtistName(folder.artistName));
+  const handleThreeDotPress = (folder: {parentFolderId: string; parentFolderName: string}) => {
+    dispatch(setParentFolderID(folder.parentFolderId));
+    dispatch(setParentFolderName(folder.parentFolderName));
     dispatch(toggleParentFolderOptionsModal());
   };
 
   useEffect(() => {
     if (!user) return;
-    const foldersRef = collection(db, 'users', user.uid, 'folders');
+    const foldersRef = collection(db, 'users', `${user.displayName}: ${user.uid}`, 'parentfolders');
     const q = query(foldersRef, orderBy('createdAt', 'desc'));
 
     const unsubscribe = onSnapshot(q, snapshot => {
-      const folderList = snapshot.docs.map(doc => ({
-        id: doc.id,
-        name: doc.data().name || 'Untitled',
-        artistName: doc.data().artistName || 'untitled',
+      const parentFolderList = snapshot.docs.map(doc => ({
+        parentFolderID: doc.id,
+        parentFolderName: doc.data().parentFolderName || 'Untitled',
         imageURL: doc.data().imageURL || null,
       }));
 
-      setParentFolders(folderList);
+      setParentFolders(parentFolderList);
     });
 
     return () => unsubscribe();
@@ -71,7 +62,8 @@ export const CollectionScreen = ({navigation}: CollectionStackScreenProps<'Colle
         <ActivityIndicator size="large" color="#0078D7" />
       ) : parentFolders.length === 0 ? (
         <View style={styles.noFoldersContainer}>
-          <Text style={styles.addAFolderText}>Add a folder!</Text>
+          <Text style={styles.addAFolderText}>Hi!</Text>
+          <Text style={styles.addAFolderText}>First, add an "Artist" folder!</Text>
         </View>
       ) : (
         <ScrollView
@@ -79,13 +71,23 @@ export const CollectionScreen = ({navigation}: CollectionStackScreenProps<'Colle
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}>
           {parentFolders.map(folder => (
-            <View key={folder.id} style={styles.folderContainer}>
+            <View key={folder.parentFolderID} style={styles.parentFolderContainer}>
               <Folder
-                folderName={folder.name}
-                artistName={folder.artistName}
+                parentFolderName={folder.parentFolderName}
+                subFolderName={folder.parentFolderName}
                 imageURL={folder.imageURL}
-                onPress={() => handleFolderPress(folder)}
-                onThreeDotPress={() => handleThreeDotPress(folder)}
+                onPress={() =>
+                  handleFolderPress({
+                    parentFolderId: folder.parentFolderID,
+                    parentFolderName: folder.parentFolderName,
+                  })
+                }
+                onThreeDotPress={() =>
+                  handleThreeDotPress({
+                    parentFolderId: folder.parentFolderID,
+                    parentFolderName: folder.parentFolderName,
+                  })
+                }
               />
             </View>
           ))}
@@ -107,6 +109,7 @@ const styles = StyleSheet.create({
 
   noFoldersContainer: {
     flex: 1,
+    gap: 20,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -117,7 +120,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 
-  folderContainer: {
+  parentFolderContainer: {
     paddingVertical: 20,
   },
 

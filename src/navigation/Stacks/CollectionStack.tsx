@@ -20,9 +20,12 @@ import {RenameSubFolderModal} from '../../components/modals/RenameSubFolderModal
 import {SubFolderOptionsModal} from '../../components/modals/SubFolderOptionsModal.tsx';
 import {SongOptionsModal} from '../../components/modals/SongOptionsModal.tsx';
 import {RenameSongModal} from '../../components/modals/RenameSongModal.tsx';
-import {AudioPlayerModal} from '../../components/modals/AudioPlayerModal.tsx';
+import {AudioPlayerModal} from '../../components/AudioPlayerModal.tsx';
 import {ReorderSongsModal} from '../../components/modals/ReorderSongsModal.tsx';
 import {RootState} from '../../../store.tsx';
+import {DebugGridOverlay} from '../../components/DebugGridOverlay.tsx';
+import {useSyncActiveTrack} from '../../Hooks/useSyncActiveTrack.ts';
+import {useRestartQueueAtEnd} from '../../Hooks/useRestartQueueAtEnd.ts';
 
 const Stack = createNativeStackNavigator<CollectionStackParamList>();
 
@@ -49,6 +52,9 @@ export const CollectionStack = () => {
   const isReorderSongsModalVisible = useSelector(
     (state: RootState) => state.reorderSongsModal.isReorderSongsModalVisible,
   );
+
+  useSyncActiveTrack(); // Keeps Redux in sync with TrackPlayer, so the activeTrack is always up to date
+  useRestartQueueAtEnd(); // Restarts the queue when the last song ends but doesn't play it (like spotify)
 
   return (
     <View style={styles.wholeContainer}>
@@ -87,6 +93,8 @@ export const CollectionStack = () => {
 
       {/* This is the EXPANDED AudioPlayerModal. Not the AudioPlayer */}
       {activeTrack && <AudioPlayerModal />}
+
+      {/* <DebugGridOverlay /> */}
     </View>
   );
 };

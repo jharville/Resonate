@@ -2,7 +2,10 @@ import React from 'react';
 import {View, StyleSheet, TouchableOpacity, TextInput, Modal, Text} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../../store.tsx';
-import {closeRenameParentFolderModal, setArtistName} from '../../redux/renameParentFolderSlice.ts';
+import {
+  closeRenameParentFolderModal,
+  setParentFolderName,
+} from '../../redux/renameParentFolderSlice.ts';
 import {auth, db} from '../../../firebaseConfig.tsx';
 import {doc, updateDoc} from '@react-native-firebase/firestore';
 
@@ -12,25 +15,30 @@ export const RenameParentFolderModal = () => {
   const isVisible = useSelector(
     (state: RootState) => state.renameParentFolder.isRenameParentModalVisible,
   );
-  const folderName = useSelector((state: RootState) => state.renameParentFolder.folderName);
-  const artistName = useSelector((state: RootState) => state.renameParentFolder.artistName);
+  const parentFolderId = useSelector((state: RootState) => state.renameParentFolder.parentFolderID);
+  const parentFolderName = useSelector(
+    (state: RootState) => state.renameParentFolder.parentFolderName,
+  );
   const dispatch = useDispatch();
 
   const closeModal = () => {
     dispatch(closeRenameParentFolderModal());
   };
 
-  const folderId = useSelector((state: RootState) => state.renameParentFolder.folderID);
-
   const handleSave = async () => {
     const user = auth.currentUser;
-    if (!user || !folderId) return;
+    if (!user || !parentFolderId) return;
 
     try {
-      const folderRef = doc(db, 'users', user.uid, 'folders', folderId);
+      const folderRef = doc(
+        db,
+        'users',
+        `${user.displayName}: ${user.uid}`,
+        'parentfolders',
+        parentFolderId,
+      );
       await updateDoc(folderRef, {
-        name: folderName,
-        artistName: artistName,
+        parentFolderName: parentFolderName,
       });
 
       closeModal();
@@ -49,8 +57,8 @@ export const RenameParentFolderModal = () => {
             style={styles.input}
             placeholder="Artist Name"
             placeholderTextColor="#ccc"
-            value={artistName}
-            onChangeText={text => dispatch(setArtistName(text))}
+            value={parentFolderName}
+            onChangeText={text => dispatch(setParentFolderName(text))}
             cursorColor={'#ffffff'}
             selectionColor={'#ffffff'}
             // cursorColor is Android only

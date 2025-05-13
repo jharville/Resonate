@@ -8,7 +8,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {auth, db} from '../../../firebaseConfig.tsx';
 import {deleteDoc, doc} from '@react-native-firebase/firestore';
-import {pickImage} from '../../imagePicker.ts';
+import {pickImage} from '../../utilities/imagePicker.ts';
 import {openRenameSubFolderModal} from '../../redux/renameSubFolderSlice.ts';
 import {closesubFolderOptionsModal} from '../../redux/subFolderOptionsModalSlice.ts';
 
@@ -50,7 +50,11 @@ export const SubFolderOptionsModal = () => {
     setTrashModalVisible(true);
   };
 
-  const parentFolderId = useSelector((state: RootState) => state.renameParentFolder.folderID);
+  const parentFolderName = useSelector(
+    (state: RootState) => state.renameParentFolder.parentFolderName,
+  );
+  const parentFolderId = useSelector((state: RootState) => state.renameParentFolder.parentFolderID);
+  const subFolderName = useSelector((state: RootState) => state.renameSubFolder.subFolderName);
   const subFolderId = useSelector((state: RootState) => state.renameSubFolder.subFolderID);
 
   const handleYesDeletePress = async () => {
@@ -61,7 +65,7 @@ export const SubFolderOptionsModal = () => {
         db,
         'users',
         user.uid,
-        'folders',
+        'parentfolders',
         parentFolderId,
         'subfolders',
         subFolderId,
@@ -75,7 +79,7 @@ export const SubFolderOptionsModal = () => {
   };
 
   const handleImagePress = () => {
-    pickImage(parentFolderId, subFolderId);
+    pickImage(parentFolderName, parentFolderId, subFolderName, subFolderId);
     dispatch(closesubFolderOptionsModal());
   };
 

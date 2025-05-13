@@ -21,6 +21,11 @@ buildscript {
     }
 }
 
+// ext {
+//     ffmpegKitPackage = "full" 
+// }
+
+
 // highlight-start
 allprojects {
     repositories {

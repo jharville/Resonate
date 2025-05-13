@@ -6,21 +6,21 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {auth, db} from '../../../firebaseConfig.tsx';
-import {deleteDoc, doc} from '@react-native-firebase/firestore';
-import {pickImage} from '../../imagePicker.ts';
+import {auth} from '../../../firebaseConfig.tsx';
+import storage from '@react-native-firebase/storage';
+import firestore from '@react-native-firebase/firestore';
+import {pickImage} from '../../utilities/imagePicker.ts';
 import {openRenameParentFolderModal} from '../../redux/renameParentFolderSlice.ts';
 import {closeParentFolderOptionsModal} from '../../redux/parentFolderOptionsModalSlice.ts';
 
 export const ParentFolderOptionsModal = () => {
   const [isTrashModalVisible, setTrashModalVisible] = useState(false);
-
+  const slideAnim = useRef(new Animated.Value(Dimensions.get('window').width)).current;
   const dispatch = useDispatch();
+  const parentFolderId = useSelector((state: RootState) => state.renameParentFolder.parentFolderID);
   const isVisible = useSelector(
     (state: RootState) => state.ParentFolderOptionsModal.isParentFolderOptionsModalVisible,
   );
-
-  const slideAnim = useRef(new Animated.Value(Dimensions.get('window').width)).current;
 
   useEffect(() => {
     if (isVisible) {
@@ -47,15 +47,45 @@ export const ParentFolderOptionsModal = () => {
     setTrashModalVisible(true);
   };
 
-  const parentFolderId = useSelector((state: RootState) => state.renameParentFolder.folderID);
-  const subFolderId = useSelector((state: RootState) => state.renameSubFolder.subFolderID);
-
   const handleYesDeletePress = async () => {
     try {
       const user = auth.currentUser;
       if (!user || !parentFolderId) return;
-      const folderRef = doc(db, 'users', user.uid, 'folders', parentFolderId);
-      await deleteDoc(folderRef);
+
+      const parentFolderRef = firestore()
+        .collection('users')
+        .doc(`${user.displayName}: ${user.uid}`)
+        .collection('parentfolders')
+        .doc(parentFolderId);
+
+      // Gets all subfolders inside the parent folder
+      const subfoldersList = await parentFolderRef.collection('subfolders').get();
+      // Loops through each subfolder
+      for (const subfolderDoc of subfoldersList.docs) {
+        const batch = firestore().batch();
+        // Gets all songs within the current subfolder
+        const songsSnapshot = await subfolderDoc.ref.collection('songs').get();
+        // Array to hold async delete promises for Firebase Storage files
+        const deleteStoragePromises: Promise<void>[] = [];
+        // Loops through each song in the subfolder
+        for (const songDoc of songsSnapshot.docs) {
+          // Gets the storage path from the song's metadata
+          const {storagePath} = songDoc.data();
+          if (storagePath) {
+            deleteStoragePromises.push(storage().ref(storagePath).delete());
+          }
+          // Adds the Firestore delete operation to the batch
+          batch.delete(songDoc.ref);
+        }
+
+        // Deletes all song files from Firebase Storage. Then, deletes their Firestore records.
+        // Then deletes subfolder they were in.
+        await Promise.all(deleteStoragePromises);
+        await batch.commit();
+        await subfolderDoc.ref.delete();
+      }
+
+      await parentFolderRef.delete();
       setTrashModalVisible(false);
       dispatch(closeParentFolderOptionsModal());
     } catch (error) {
@@ -63,9 +93,12 @@ export const ParentFolderOptionsModal = () => {
     }
   };
 
+  const parentFolderName = useSelector(
+    (state: RootState) => state.renameParentFolder.parentFolderName,
+  );
   const handleImagePress = () => {
     dispatch(closeParentFolderOptionsModal());
-    pickImage(parentFolderId);
+    pickImage(parentFolderName, parentFolderId);
   };
 
   return (
