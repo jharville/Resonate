@@ -87,8 +87,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingTop: 10,
     backgroundColor: '#151314',
-    borderTopWidth: 2,
-    borderColor: '#26272b',
+    borderTopWidth: 3,
+    borderColor: '#4e555d',
   },
 
   vinylAndInfoContainer: {

@@ -6,13 +6,14 @@ import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../store.tsx';
 import {loadingStatuses, useLoadingStatus} from '../Hooks/useLoadingStatuses.ts';
 import {collection, onSnapshot, query, orderBy} from '@react-native-firebase/firestore';
-import {db} from '../../firebaseConfig.tsx';
+import {db} from '../../firebaseConfig.ts';
 import {togglesubFolderOptionsModal} from '../redux/subFolderOptionsModalSlice.ts';
 import {setSubFolderID, setSubFolderName} from '../redux/renameSubFolderSlice.ts';
 import {UploadSubFolderModal} from '../components/modals/UploadSubFolderModal.tsx';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {setParentFolderID} from '../redux/renameParentFolderSlice.ts';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
+import {SongUploadProgress} from '../components/SongUploadProgress.tsx';
 
 // This is the "SubFolder" Screen. All Subfolders stored within a Parent Folder from "Collection Screen" will be listed in this stack.
 
@@ -91,6 +92,7 @@ export const SubFolderScreen = ({
 
   return (
     <View style={styles.wholePage}>
+      <SongUploadProgress />
       <View style={styles.parentFolderNameContainer}>
         {status === loadingStatuses.LOADING ? (
           <SkeletonPlaceholder

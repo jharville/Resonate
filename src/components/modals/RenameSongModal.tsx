@@ -3,7 +3,7 @@ import {View, StyleSheet, TouchableOpacity, TextInput, Modal, Text} from 'react-
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../../store.tsx';
 import {closeRenameSongModal, setSongName} from '../../redux/renameSongSlice.ts';
-import {auth, db} from '../../../firebaseConfig.tsx';
+import {auth, db} from '../../../firebaseConfig.ts';
 import {doc, updateDoc} from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 

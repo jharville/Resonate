@@ -14,7 +14,7 @@ import {
 import Entypo from 'react-native-vector-icons/Entypo';
 import Feather from 'react-native-vector-icons/Feather';
 import {auth, db} from '../../../firebaseConfig';
-import {collection, doc, serverTimestamp, setDoc} from '@react-native-firebase/firestore';
+import {addDoc, collection, doc, serverTimestamp, setDoc} from '@react-native-firebase/firestore';
 import {ToggleButton} from '../ToggleButton';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../../store.tsx';
@@ -69,8 +69,8 @@ export const UploadFolderModal = () => {
         parentFolderName: parentFolderName.trim(),
         createdAt: serverTimestamp(),
       };
-      await setDoc(
-        doc(collection(db, 'users', `${user.displayName}: ${user.uid}`, 'parentfolders')),
+      await addDoc(
+        collection(db, 'users', `${user.displayName}: ${user.uid}`, 'parentfolders'),
         newFolder,
       );
       dispatch(setParentFolderName(''));

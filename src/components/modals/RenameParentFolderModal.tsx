@@ -6,7 +6,7 @@ import {
   closeRenameParentFolderModal,
   setParentFolderName,
 } from '../../redux/renameParentFolderSlice.ts';
-import {auth, db} from '../../../firebaseConfig.tsx';
+import {auth, db} from '../../../firebaseConfig.ts';
 import {doc, updateDoc} from '@react-native-firebase/firestore';
 
 // This is the parent folder Rename Folder Modal component.

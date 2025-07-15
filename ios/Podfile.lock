@@ -2735,7 +2735,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-safe-area-context (5.4.0):
+  - react-native-safe-area-context (5.5.1):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2748,8 +2748,8 @@ PODS:
     - React-featureflags
     - React-graphics
     - React-ImageManager
-    - react-native-safe-area-context/common (= 5.4.0)
-    - react-native-safe-area-context/fabric (= 5.4.0)
+    - react-native-safe-area-context/common (= 5.5.1)
+    - react-native-safe-area-context/fabric (= 5.5.1)
     - React-NativeModulesApple
     - React-RCTFabric
     - React-rendererdebug
@@ -2758,7 +2758,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-safe-area-context/common (5.4.0):
+  - react-native-safe-area-context/common (5.5.1):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2779,7 +2779,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-safe-area-context/fabric (5.4.0):
+  - react-native-safe-area-context/fabric (5.5.1):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2801,7 +2801,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-slider (4.5.6):
+  - react-native-slider (4.5.7):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2814,7 +2814,7 @@ PODS:
     - React-featureflags
     - React-graphics
     - React-ImageManager
-    - react-native-slider/common (= 4.5.6)
+    - react-native-slider/common (= 4.5.7)
     - React-NativeModulesApple
     - React-RCTFabric
     - React-rendererdebug
@@ -2823,7 +2823,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-slider/common (4.5.6):
+  - react-native-slider/common (4.5.7):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2847,7 +2847,7 @@ PODS:
   - react-native-track-player (4.1.1):
     - React-Core
     - SwiftAudioEx (= 1.1.0)
-  - react-native-video (6.13.0):
+  - react-native-video (6.16.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2860,7 +2860,7 @@ PODS:
     - React-featureflags
     - React-graphics
     - React-ImageManager
-    - react-native-video/Video (= 6.13.0)
+    - react-native-video/Video (= 6.16.0)
     - React-NativeModulesApple
     - React-RCTFabric
     - React-rendererdebug
@@ -2869,7 +2869,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-video/Fabric (6.13.0):
+  - react-native-video/Fabric (6.16.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2890,7 +2890,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-video/Video (6.13.0):
+  - react-native-video/Video (6.16.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -3265,7 +3265,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNCAsyncStorage (2.1.2):
+  - RNCAsyncStorage (2.2.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -3322,7 +3322,7 @@ PODS:
     - Firebase/Storage (= 11.11.0)
     - React-Core
     - RNFBApp
-  - RNFlashList (1.8.0):
+  - RNFlashList (1.8.3):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -3345,7 +3345,7 @@ PODS:
     - Yoga
   - RNFS (2.20.0):
     - React-Core
-  - RNGestureHandler (2.25.0):
+  - RNGestureHandler (2.27.1):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -3495,7 +3495,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNScreens (4.10.0):
+  - RNScreens (4.11.1):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -3516,9 +3516,9 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNScreens/common (= 4.10.0)
+    - RNScreens/common (= 4.11.1)
     - Yoga
-  - RNScreens/common (4.10.0):
+  - RNScreens/common (4.11.1):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -3540,7 +3540,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNSVG (15.11.2):
+  - RNSVG (15.12.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -3560,9 +3560,9 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNSVG/common (= 15.11.2)
+    - RNSVG/common (= 15.12.0)
     - Yoga
-  - RNSVG/common (15.11.2):
+  - RNSVG/common (15.12.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -3991,10 +3991,10 @@ SPEC CHECKSUMS:
   react-native-document-picker: 4dbb5ae3e8b51559a56dc0259ee8e8331fb0305d
   react-native-document-viewer: 6afd9a3d0dc443325ee580a85d233671555954d4
   react-native-image-picker: 5f9867b6a223594dbfdb456428638daef42e6e6c
-  react-native-safe-area-context: 0257d12123e63462a95dda636010156d03806233
-  react-native-slider: eec56ab0c824fbe25ab410bc66c5c2afdda030c4
+  react-native-safe-area-context: c4a660f9f6e460b19c87c2145e95335d59d578e1
+  react-native-slider: 1e655d76622a8611de2e6f403cd206f876acc16a
   react-native-track-player: 6dc2e2633265704b8ab6d8124b80239d4ed1f911
-  react-native-video: 1498d8bfcbd75b2119171dfab5415749b14a1d1e
+  react-native-video: 2549fcb1778d35e33ecff8a9b539ce5b6f58db7b
   React-NativeModulesApple: ce75ed8f1188483be3620bf9dbb3b1286dd39bab
   React-perflogger: 26d07766b033f84559bd520e949453dba8bf1cd8
   React-performancetimeline: 24eb0a6a341a1b0d48bc75a961ee480db0bad47e
@@ -4025,19 +4025,19 @@ SPEC CHECKSUMS:
   ReactCommon: 00e8f55183ce1358c920a954cd588831ccf0c397
   RecaptchaInterop: 11e0b637842dfb48308d242afc3f448062325aba
   RNAudioAPI: 6c4c34e58726a07c3cea813157f211e5ae5a838e
-  RNCAsyncStorage: 5321442ed26760d7581b26effab82399ea5ff18b
+  RNCAsyncStorage: 6a8127b6987dc9fbce778669b252b14c8355c7ce
   RNCMaskedView: f1d7a375655e54d0aca367a16692a04a8cb69a71
   RNFBApp: a448037d2df74af9d374a0b765be12ff1e844dc0
   RNFBAuth: 006c81cb97cd6597a36f14ec332b229626283823
   RNFBFirestore: 03f3648f47529a14b54e9b427c722898c9046917
   RNFBStorage: f058204f5e684a95797ac78e2d3918fc3dd07b17
-  RNFlashList: eb8d9251c1cf4d200cb11cf5473c0205fef6f8ba
+  RNFlashList: b31c96e892debd3a53303ab3b6cb0b62891f3f4c
   RNFS: 89de7d7f4c0f6bafa05343c578f61118c8282ed8
-  RNGestureHandler: 96fc2de36a25cf6bece93e030c2ed9a5e95d33dd
+  RNGestureHandler: 79e41bd3d49e9231c62120276bc979f855ecabf6
   RNImageCropPicker: b0afedeefd8655254a15c34103718455fde6ce59
   RNReanimated: fe5c52894886953248a81a10b2a9b6eeb5398d61
-  RNScreens: 04304337930029a5d0db297b22eb0f07adc31a2c
-  RNSVG: 71e35e78add645b84b52b0c6f203f91028e1ab5e
+  RNScreens: 12b6d4363803cd49fa651c081d9910d300d8474d
+  RNSVG: 8d7f4c865bb5eba4fbd097249b227b315b3d81f5
   RNVectorIcons: 1743deffb9c4b70f253704075dbac432cc802e74
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   SwiftAudioEx: f6aa653770f3a0d3851edaf8d834a30aee4a7646

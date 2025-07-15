@@ -166,19 +166,21 @@ export const AudioPlayerModal = () => {
         <View style={styles.trackNameAndCloseButton}>
           <View style={styles.trackTitleAndSubFolderName}>
             <Text style={styles.trackTitleStyle} numberOfLines={1}>
-              {activeTrack?.name}
+              Track: {activeTrack?.name}
             </Text>
-            <Text style={styles.trackFolderStyle} numberOfLines={1}>
-              {subFolderName}
+
+            <Text style={styles.subFolderName} numberOfLines={1}>
+              SubFolder: {subFolderName}
             </Text>
-            <Text style={styles.trackFolderStyle} numberOfLines={1}>
-              {parentFolderName}
+
+            <Text style={styles.parentFolderName} numberOfLines={1}>
+              Folder: {parentFolderName}
             </Text>
           </View>
 
           {/* Close Modal Button */}
           <TouchableOpacity onPress={closeModal}>
-            <AntDesign name="down" size={35} color="#fff" />
+            <AntDesign name="down" size={35} color="#0078D7" />
           </TouchableOpacity>
         </View>
 
@@ -305,12 +307,13 @@ const styles = StyleSheet.create({
 
   content: {
     flex: 1,
-    paddingVertical: isIOS ? 0 : 20,
+    paddingTop: isIOS ? 20 : 5,
   },
 
   trackNameAndCloseButton: {
     flexDirection: 'row',
     paddingBottom: 20,
+    gap: 15,
   },
 
   artContainer: {
@@ -337,13 +340,13 @@ const styles = StyleSheet.create({
     gap: 10,
   },
 
-  sliderTrackTimesMetaContainer: {
-    gap: isIOS ? 0 : 10,
-  },
-
   waveContainer: {
     alignItems: 'center',
     justifyContent: 'center',
+  },
+
+  sliderTrackTimesMetaContainer: {
+    gap: isIOS ? 0 : 10,
   },
 
   trackTitleAndSubFolderName: {
@@ -354,13 +357,17 @@ const styles = StyleSheet.create({
   trackTitleStyle: {
     color: 'white',
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: '500',
   },
 
-  trackFolderStyle: {
+  subFolderName: {
     color: 'white',
-    fontSize: 18,
-    fontWeight: '300',
+    fontSize: 15,
+  },
+
+  parentFolderName: {
+    color: 'white',
+    fontSize: 15,
   },
 
   trackButtonsContainer: {
@@ -368,7 +375,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 35,
-    paddingTop: 20,
+    paddingTop: isIOS ? 20 : 10,
   },
 
   getActionButtonStyle: {

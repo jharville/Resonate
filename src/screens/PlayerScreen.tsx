@@ -22,6 +22,7 @@ import {CustomAlert} from '../components/CustomAlert.tsx';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import {useFormatTime} from '../Hooks/useFormatTime.ts';
 import TrackPlayer from 'react-native-track-player';
+import {setUploadProgress} from '../redux/songProgressSlice.tsx';
 
 // This is the "Player Screen". This will only render the player at the bottom
 // and songs listed from Firebase per User.

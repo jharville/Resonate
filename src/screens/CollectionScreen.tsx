@@ -10,6 +10,7 @@ import {collection, onSnapshot, query, orderBy} from '@react-native-firebase/fir
 import {db} from '../../firebaseConfig';
 import {toggleParentFolderOptionsModal} from '../redux/parentFolderOptionsModalSlice.ts';
 import {setParentFolderID, setParentFolderName} from '../redux/renameParentFolderSlice.ts';
+import {SongUploadProgress} from '../components/SongUploadProgress.tsx';
 
 // This is the "Collection Screen". All unique Folders will be listed in this stack.
 
@@ -58,6 +59,7 @@ export const CollectionScreen = ({navigation}: CollectionStackScreenProps<'Colle
 
   return (
     <View style={styles.wholePage}>
+      <SongUploadProgress />
       {status === loadingStatuses.LOADING ? (
         <ActivityIndicator size="large" color="#0078D7" />
       ) : parentFolders.length === 0 ? (
@@ -103,8 +105,6 @@ const styles = StyleSheet.create({
   wholePage: {
     flex: 1,
     backgroundColor: '#151314',
-    paddingHorizontal: 20,
-    paddingTop: 20,
   },
 
   noFoldersContainer: {
@@ -125,6 +125,7 @@ const styles = StyleSheet.create({
   },
 
   scrollContent: {
+    paddingHorizontal: 20,
     paddingBottom: 90,
   },
 });

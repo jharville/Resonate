@@ -3,7 +3,7 @@ import {View, StyleSheet, TouchableOpacity, TextInput, Modal, Text} from 'react-
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../../store.tsx';
 import {closeRenameSubFolderModal, setSubFolderName} from '../../redux/renameSubFolderSlice.ts';
-import {auth, db} from '../../../firebaseConfig.tsx';
+import {auth, db} from '../../../firebaseConfig.ts';
 import {doc, updateDoc} from '@react-native-firebase/firestore';
 
 // This component is used to rename a SUBFOLDER. It is displayed as a modal when the user wants to rename a subfolder. It also handles the logic for saving the new name to the database.

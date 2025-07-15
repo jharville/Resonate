@@ -1,7 +1,7 @@
 import ImagePicker from 'react-native-image-crop-picker';
 import storage from '@react-native-firebase/storage';
 import {doc, updateDoc} from '@react-native-firebase/firestore';
-import {auth, db} from '../../firebaseConfig.tsx';
+import {auth, db} from '../../firebaseConfig.ts';
 import RNFS from 'react-native-fs';
 
 // Uploads the selected image to Firebase Storage and updates the Firestore doc with the imageURL

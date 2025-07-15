@@ -9,6 +9,7 @@ import {auth} from '../../firebaseConfig';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {FFprobeKit, FFmpegKit, ReturnCode, FFmpegSession} from 'ffmpeg-kit-react-native';
 import {AudioContext} from 'react-native-audio-api';
+import {isIOS} from '../utilities/constants.ts';
 
 export const UploadSong = ({
   parentFolderName,
@@ -16,6 +17,7 @@ export const UploadSong = ({
   subFolderName,
   subFolderId,
   onUploadSuccess,
+  onUploadingFile,
 }: UploadSongProps) => {
   const dispatch = useDispatch();
   const user = auth.currentUser;
@@ -26,7 +28,7 @@ export const UploadSong = ({
       const response = await pick({
         allowMultiSelection: true,
         type: [types.audio],
-        mode: 'open',
+        mode: 'import',
       });
 
       const user = auth.currentUser;
@@ -46,6 +48,7 @@ export const UploadSong = ({
           subFolderId,
           file,
         );
+        console.log('file.uri:', file.uri);
       }
     } catch (err) {
       console.log('Error picking file:', err);
@@ -61,17 +64,25 @@ export const UploadSong = ({
     subFolderId: string,
     file: any,
   ) => {
+    dispatch(setUploadProgress(0));
+
     try {
-      const localFilePath = await copyToCacheDirectory(file.uri);
+      const localFilePath = await copyToCacheDirectory(file.fileCopyUri || file.uri);
+
       if (!localFilePath) {
         console.log('File path conversion failed');
         return;
       }
 
-      const fileName = file.name || `audio_${Date.now()}.mp3`;
+      const fileExtension = file.name?.split('.').pop() || 'mp3';
+      const baseName = file.name?.replace(/\.[^/.]+$/, '') || 'audio';
+      const timestamp = Date.now();
+      const fileName = `${baseName}_${timestamp}.${fileExtension}`;
+
       const storagePath = `uploadedSongs/users/${displayName}: ${userId}/parentfolders/${parentFolderName}: ${parentFolderId}/subfolders/${subFolderName}: ${subFolderId}/song name: ${fileName}`;
       const storageRef = storage().ref(storagePath);
-
+      onUploadingFile?.();
+      // This is to show the progress bar when a song is being uploaded
       const metadata = await extractAudioMetadata(localFilePath);
       const waveform = await generateWaveformArray(localFilePath);
 
@@ -106,6 +117,8 @@ export const UploadSong = ({
 
       await task;
 
+      dispatch(setUploadProgress(null));
+
       const downloadURL = await storageRef.getDownloadURL();
       console.log('File uploaded successfully:', downloadURL);
 
@@ -126,8 +139,6 @@ export const UploadSong = ({
           createdAt: firestore.FieldValue.serverTimestamp(),
           order: Date.now(),
         });
-
-      dispatch(setUploadProgress(null));
     } catch (error) {
       console.error('Upload failed for file:', file, error);
       Alert.alert('Upload Failed', 'Something went wrong while uploading.');
@@ -207,8 +218,17 @@ export const UploadSong = ({
 
   const copyToCacheDirectory = async (fileUri: string): Promise<string | null> => {
     try {
-      const destPath = `${RNFS.TemporaryDirectoryPath}/${Date.now()}_audio.mp3`;
-      await RNFS.copyFile(fileUri, destPath);
+      let sourcePath = fileUri;
+
+      if (isIOS) {
+        // On iOS, decode the URI and remove 'file://' or else pathing will fail
+        const decodedUri = decodeURIComponent(fileUri.replace('file://', ''));
+        sourcePath = '/' + decodedUri;
+      }
+
+      const destPath = `${RNFS.TemporaryDirectoryPath}/${Date.now()}_audio.wav`;
+
+      await RNFS.copyFile(sourcePath, destPath);
       return destPath;
     } catch (error) {
       console.error('Failed to copy file:', error);
@@ -248,5 +268,6 @@ type UploadSongProps = {
   parentFolderId: string;
   subFolderName: string;
   subFolderId: string;
+  onUploadingFile?: () => void; // For showing the progress bar when a file is being uploaded
   onUploadSuccess?: () => void; //For updating the queue in TrackPlayer upon song upload
 };

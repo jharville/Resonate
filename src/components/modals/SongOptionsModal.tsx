@@ -14,13 +14,12 @@ import {RootState} from '../../../store';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {auth} from '../../../firebaseConfig.tsx';
+import {auth} from '../../../firebaseConfig.ts';
 import {closeSongOptionsModal} from '../../redux/songOptionsModalSlice.ts';
 import storage from '@react-native-firebase/storage';
 import firestore from '@react-native-firebase/firestore';
 import {clearSelectedSong} from '../../redux/selectedSongSlice.ts';
 import {openRenameSongModal} from '../../redux/renameSongSlice.ts';
-import TrackPlayer from 'react-native-track-player';
 
 // This is the SONG Options Modal.
 // It allows the user to rename, move, or delete a Song

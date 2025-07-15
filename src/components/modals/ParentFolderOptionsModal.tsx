@@ -6,7 +6,7 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {auth} from '../../../firebaseConfig.tsx';
+import {auth} from '../../../firebaseConfig.ts';
 import storage from '@react-native-firebase/storage';
 import firestore from '@react-native-firebase/firestore';
 import {pickImage} from '../../utilities/imagePicker.ts';
@@ -14,6 +14,7 @@ import {openRenameParentFolderModal} from '../../redux/renameParentFolderSlice.t
 import {closeParentFolderOptionsModal} from '../../redux/parentFolderOptionsModalSlice.ts';
 
 export const ParentFolderOptionsModal = () => {
+  const user = auth.currentUser;
   const [isTrashModalVisible, setTrashModalVisible] = useState(false);
   const slideAnim = useRef(new Animated.Value(Dimensions.get('window').width)).current;
   const dispatch = useDispatch();
@@ -49,7 +50,6 @@ export const ParentFolderOptionsModal = () => {
 
   const handleYesDeletePress = async () => {
     try {
-      const user = auth.currentUser;
       if (!user || !parentFolderId) return;
 
       const parentFolderRef = firestore()

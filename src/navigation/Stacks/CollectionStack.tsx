@@ -1,13 +1,8 @@
 import React from 'react';
-import {
-  createNativeStackNavigator,
-  NativeStackNavigationOptions,
-} from '@react-navigation/native-stack';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {CollectionScreen} from '../../screens/CollectionScreen';
 import {SubFolderScreen} from '../../screens/SubFolderScreen';
 import {CollectionStackParamList} from '../types/navigation.types';
-import {RightSideHeader} from '../HeaderComponents/RightSideHeader';
-import {LeftSideHeader} from '../HeaderComponents/LeftSideHeader';
 import {PlayerScreen} from '../../screens/PlayerScreen';
 import {StyleSheet, View} from 'react-native';
 import {useSelector} from 'react-redux';
@@ -26,23 +21,9 @@ import {RootState} from '../../../store.tsx';
 import {DebugGridOverlay} from '../../components/DebugGridOverlay.tsx';
 import {useSyncActiveTrack} from '../../Hooks/useSyncActiveTrack.ts';
 import {useRestartQueueAtEnd} from '../../Hooks/useRestartQueueAtEnd.ts';
+import {CustomHeader} from '../../components/CustomHeader.tsx';
 
 const Stack = createNativeStackNavigator<CollectionStackParamList>();
-
-const CollectionScreenOptions: NativeStackNavigationOptions = {
-  headerShown: true,
-  headerLeft: LeftSideHeader,
-  headerRight: RightSideHeader,
-  headerTitle: '',
-  headerBackVisible: false,
-  headerShadowVisible: false,
-  headerStyle: {
-    backgroundColor: '#151314',
-  },
-
-  headerTintColor: 'white',
-  headerTitleAlign: 'center',
-};
 
 export const CollectionStack = () => {
   const activeTrack = useSelector(
@@ -58,14 +39,33 @@ export const CollectionStack = () => {
 
   return (
     <View style={styles.wholeContainer}>
-      <Stack.Navigator screenOptions={CollectionScreenOptions}>
+      <Stack.Navigator>
+        {/* Collection Screen */}
         <Stack.Screen
           name="CollectionScreen"
           component={CollectionScreen}
-          options={CollectionScreenOptions}
+          options={({navigation, route}) => ({
+            header: () => <CustomHeader route={route} navigation={navigation} options={{}} />,
+          })}
         />
-        <Stack.Screen name="SubFolderScreen" component={SubFolderScreen} />
-        <Stack.Screen name="PlayerScreen" component={PlayerScreen} />
+
+        {/* SubFolder Screen */}
+        <Stack.Screen
+          name="SubFolderScreen"
+          component={SubFolderScreen}
+          options={({navigation, route}) => ({
+            header: () => <CustomHeader route={route} navigation={navigation} options={{}} />,
+          })}
+        />
+
+        {/* Player Screen */}
+        <Stack.Screen
+          name="PlayerScreen"
+          component={PlayerScreen}
+          options={({navigation, route}) => ({
+            header: () => <CustomHeader route={route} navigation={navigation} options={{}} />,
+          })}
+        />
       </Stack.Navigator>
 
       {/* For Conditionally rendering the music player at the bottom of the screen */}
@@ -102,6 +102,7 @@ export const CollectionStack = () => {
 const styles = StyleSheet.create({
   wholeContainer: {
     flex: 1,
+    backgroundColor: '#151314',
   },
   footer: {
     textAlign: 'center',

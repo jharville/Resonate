@@ -6,7 +6,7 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {auth, db} from '../../../firebaseConfig.tsx';
+import {auth, db} from '../../../firebaseConfig.ts';
 import {deleteDoc, doc} from '@react-native-firebase/firestore';
 import {pickImage} from '../../utilities/imagePicker.ts';
 import {openRenameSubFolderModal} from '../../redux/renameSubFolderSlice.ts';
@@ -18,6 +18,7 @@ import {closesubFolderOptionsModal} from '../../redux/subFolderOptionsModalSlice
 export const SubFolderOptionsModal = () => {
   const [isTrashModalVisible, setTrashModalVisible] = useState(false);
 
+  const user = auth.currentUser;
   const dispatch = useDispatch();
   const isVisible = useSelector(
     (state: RootState) => state.subFolderOptionsModal.issubFolderOptionsModalVisible,
@@ -59,18 +60,18 @@ export const SubFolderOptionsModal = () => {
 
   const handleYesDeletePress = async () => {
     try {
-      const user = auth.currentUser;
       if (!user || !subFolderId) return;
-      const folderRef = doc(
+
+      const subfolderRef = doc(
         db,
         'users',
-        user.uid,
+        `${user.displayName}: ${user.uid}`,
         'parentfolders',
         parentFolderId,
         'subfolders',
         subFolderId,
       );
-      await deleteDoc(folderRef);
+      await deleteDoc(subfolderRef);
       setTrashModalVisible(false);
       dispatch(closesubFolderOptionsModal());
     } catch (error) {

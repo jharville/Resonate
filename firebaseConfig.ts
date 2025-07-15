@@ -16,12 +16,12 @@ export const firebaseConfig = {
 const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
 
 // Initializes Firebase Authentication
-const auth = getAuth(app);
+const auth = getAuth();
 
 // Initializes Firebase Storage (for large files e.g. WAV., mp3)
-const storageRef = getStorage(app);
+const storageRef = getStorage();
 
 // Initializes Firestore (database)
-const db = getFirestore(app);
+const db = getFirestore();
 
 export {app, auth, db, storageRef};
